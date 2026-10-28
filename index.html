@@ -165,10 +165,10 @@ const shiftM=(M,d)=>{const x=new Date(+M.slice(0,4),+M.slice(5)-1+d,1);return x.
 const uid=()=>Date.now()*1000+Math.floor(Math.random()*1000);
 const tt=(a,f)=>a.reduce((s,x)=>s+(+f(x)||0),0);
 const nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
-const COLS=['fx','pc','pt','en','cx','pend','merc','freq'];
+const COLS=['fx','pc','pt','en','cx','pend','merc','freq','lfx','lpt','len'];
 const LK='nosso-lar-v1';
 let S={};COLS.forEach(c=>S[c]=[]);
-let ME='',tab='home',fsub='res',resM=ym(),newUrg=2,openMov=null,showDone=false,syncMsg='',booted=false;
+let lm=ym(),ME='',tab='home',fsub='res',resM=ym(),newUrg=2,openMov=null,showDone=false,syncMsg='',booted=false;
 const prevPct={};
 
 /* ================== dados ================== */
@@ -196,9 +196,9 @@ function sparkle(ev,em){const x=ev&&ev.clientX!=null?ev.clientX:innerWidth/2,y=e
     const a=Math.PI*2*i/9,r=40+Math.random()*30;requestAnimationFrame(()=>{s.style.transform=`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) scale(.6)`;s.style.opacity=0});setTimeout(()=>s.remove(),800)}}
 
 /* ================== pessoas ================== */
-const who=q=>q?`<span class="who ${q==='Lica'?'li':q==='Léo'?'le':'ca'}">${esc(q)}</span>`:'';
+const who=q=>q?`<span class="who ${q==='Laura'?'li':q==='Léo'?'le':'ca'}">${esc(q)}</span>`:'';
 function setMe(n){ME=n;try{localStorage.setItem('nl-me',n)}catch(e){}closeSheet();render();toast('Oi, '+n+'! 💛')}
-function askMe(){openSheet(`<h2 style="margin-top:0">Quem está usando este celular?</h2><p class="mut">Assim o app mostra quem lançou e pagou cada coisa.</p><div class="add"><button class="btn sage" style="flex:1;padding:16px" onclick="setMe('Léo')">🧔 Léo</button><button class="btn" style="flex:1;padding:16px;background:var(--rosa)" onclick="setMe('Lica')">👩 Lica</button></div>`)}
+function askMe(){openSheet(`<h2 style="margin-top:0">Quem está usando este celular?</h2><p class="mut">Assim o app mostra quem lançou e pagou cada coisa.</p><div class="add"><button class="btn sage" style="flex:1;padding:16px" onclick="setMe('Léo')">🧔 Léo</button><button class="btn" style="flex:1;padding:16px;background:var(--rosa)" onclick="setMe('Laura')">👩 Laura</button></div>`)}
 
 /* ================== cálculos ================== */
 const gsL=(x,M)=>((x.gs||{})[M])||[],gsT=(x,M)=>tt(gsL(x,M),a=>a.v);
@@ -213,7 +213,7 @@ function venc(x,M){const p=pgOf(x,M);if(!x.dia)return p?`<small>✔ pago</small>
   return diff<0?`<span class="pill hot">venceu dia ${dd}</span>`:diff===0?'<span class="pill hot">vence HOJE</span>':diff<=3?`<span class="pill warm">vence em ${diff} dia(s)</span>`:`<small>vence dia ${dd}</small>`}
 
 /* ================== navegação ================== */
-const TABS=[['home','🏡','Início'],['fin','💰','Finanças'],['cx','🫙','Caixinhas'],['lica','🌷','Lica'],['merc','🛒','Mercado']];
+const TABS=[['home','🏡','Início'],['fin','💰','Finanças'],['cx','🫙','Caixinhas'],['lica','👶','Lica'],['merc','🛒','Mercado']];
 function go(t,s){tab=t;if(s)fsub=s;openMov=null;render();scrollTo(0,0)}
 function fs(s){fsub=s;render()}
 function nav(){$('#nav').innerHTML=TABS.map(([k,e,n])=>`<button class="${tab===k?'sel':''}" onclick="go('${k}')"><span>${e}</span>${n}</button>`).join('')}
@@ -227,8 +227,8 @@ function home(){const c=calc(ym()),h=new Date().getHours(),sa=h<5?'Boa madrugada
   let o=`<div class="hero">${HOUSE}<div><small>${sa}${ME?', '+ME:''} ✨</small><h1>Nosso Lar</h1></div><button class="gear" onclick="openSet()">⚙️</button></div>${syncMsg?`<div class="sync">${syncMsg}</div>`:''}`;
   if(!S.fx.length&&!S.en.length&&!S.pc.length)o+=`<div class="card" style="background:var(--terra2)"><b class="serif" style="font-size:18px">Vamos começar? 🏡</b><p style="margin:6px 0 12px">Traga as contas da casa do seu Meu Dinheiro. Você escolhe o que entra, item por item.</p><button class="btn" onclick="impStart()">📂 Trazer do Meu Dinheiro</button></div>`;
   o+=`<div class="tiles"><button class="tile big" onclick="go('fin','mes')"><span class="mut" style="font-weight:700">💰 ${mesN(c.M)}</span><div class="kpi"><div>⏳ Falta pagar<b>${m$(c.falta)}</b></div><div>${c.sobra>=0?'🌼':'⚠️'} Sobra no mês<b style="color:${c.sobra<0?'var(--red)':'var(--ink)'}">${m$(c.sobra)}</b></div></div></button>
-  <button class="tile" onclick="go('lica')"><span class="e">🌷</span><b class="n">${pa.length}</b><span>pendência${pa.length===1?'':'s'} da Lica</span>${urg?`<span class="pill hot">🔥 ${urg} pra já</span>`:''}</button>
-  <button class="tile" onclick="go('merc')"><span class="e">🛒</span><b class="n">${S.merc.length}</b><span>no mercado</span>${S.merc.length?`<small style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">${esc(S.merc.slice(-3).map(x=>x.t).join(', '))}</small>`:''}</button></div>`;
+  <button class="tile" onclick="go('lica')"><span class="e">👶</span><b class="n">${pa.length}</b><span>pendência${pa.length===1?'':'s'} da Lica</span>${urg?`<span class="pill hot">🔥 ${urg} pra já</span>`:''}</button>
+  <button class="tile" onclick="go('merc')"><span class="e">🛒</span><b class="n">${S.merc.length}</b><span>no mercado</span>${S.merc.length?`<small style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">${esc(S.merc.slice(-3).map(x=>x.t).join(', '))}</small>`:''}</button>${lavTile()}</div>`;
   o+=`<h2>🫙 Nossas caixinhas</h2><div class="card">${cxs.map(x=>{const p=pctOf(x);return `<div style="margin:6px 0 12px" onclick="go('cx')"><div style="display:flex;justify-content:space-between;font-weight:700"><span>${esc(x.e||'🫙')} ${esc(x.n)}</span><span>${Math.floor(p*100)}%</span></div><div class="bar" style="margin-top:5px"><i style="width:${p*100}%;background:${x.c||'var(--terra)'}"></i></div></div>`}).join('')||`<div class="empty">Nenhuma caixinha ainda.<br><button class="btn soft" style="margin-top:10px" onclick="go('cx')">＋ Criar a primeira</button></div>`}</div>`;
   return o}
 
@@ -265,12 +265,12 @@ function pontV(){return `<div class="card"><small>Contas que aparecem uma vez s�
   <div class="total">⏳ Falta pagar: <b>${m$(tt(S.pt.filter(x=>!x.ok),x=>x.v))}</b></div></div>`}
 function tgPt(id,ev){const x=S.pt.find(a=>a.id===id);if(x.ok)upd('pt',id,{ok:false,okM:'',quem:''});else{sparkle(ev,'✨');upd('pt',id,{ok:true,okM:ym(),quem:ME})}}
 
-const PS=['Léo','Lica','Casa'];
+const PS=['Léo','Laura','Casa'];
 function entV(){const t=tt(S.en,e=>e.v*(e.q||1)),by=p=>tt(S.en.filter(e=>(e.p||'Casa')===p),e=>e.v*(e.q||1));
-  return `<div class="card"><b class="serif" style="font-size:18px">💵 Entra por mês: ${m$(t)}</b><div class="kpi"><div>${who('Léo')} coloca<b>${m$(by('Léo'))}</b></div><div>${who('Lica')} coloca<b>${m$(by('Lica'))}</b></div>${by('Casa')?`<div class="wide">${who('Casa')} outras<b>${m$(by('Casa'))}</b></div>`:''}</div></div>
+  return `<div class="card"><b class="serif" style="font-size:18px">💵 Entra por mês: ${m$(t)}</b><div class="kpi"><div>${who('Léo')} coloca<b>${m$(by('Léo'))}</b></div><div>${who('Laura')} coloca<b>${m$(by('Laura'))}</b></div>${by('Casa')?`<div class="wide">${who('Casa')} outras<b>${m$(by('Casa'))}</b></div>`:''}</div></div>
   <div class="card">${S.en.map(e=>`<div class="row"><span class="t"><b onclick="ren('en',${e.id})">${esc(e.n)}</b><br><button onclick="cyP(${e.id})" title="Trocar quem">${who(e.p||'Casa')} <small>trocar</small></button>${e.q?'<br><small>valor por vez × vezes no mês</small>':''}</span><input class="num" inputmode="decimal" value="${e.v}" onchange="upd('en',${e.id},{v:num(this.value)})">${e.q?`✕<input class="num" style="width:56px" inputmode="numeric" value="${e.q}" onchange="upd('en',${e.id},{q:num(this.value)||1})">`:''}<button class="x" onclick="delC('en',${e.id})">🗑</button></div>`).join('')||'<div class="empty">Cadastre aqui quanto cada um coloca na casa por mês. 💛</div>'}</div>
-  <div class="card"><b>＋ Nova entrada</b><div class="add" style="margin-top:8px"><input id="enn" placeholder="Ex.: Salário da Lica"><input id="env" class="num" inputmode="decimal" placeholder="Valor"><input id="enq" style="width:74px" inputmode="numeric" placeholder="Vezes"></div>
-  <div class="chips" id="enp">${PS.map(p=>`<button class="chip ${p===(ME||'Léo')?'sel':''}" data-p="${p}" onclick="document.querySelectorAll('#enp .chip').forEach(c=>c.classList.toggle('sel',c===this))">${p==='Léo'?'🧔':p==='Lica'?'👩':'🏠'} ${p}</button>`).join('')}</div>
+  <div class="card"><b>＋ Nova entrada</b><div class="add" style="margin-top:8px"><input id="enn" placeholder="Ex.: Salário da Laura"><input id="env" class="num" inputmode="decimal" placeholder="Valor"><input id="enq" style="width:74px" inputmode="numeric" placeholder="Vezes"></div>
+  <div class="chips" id="enp">${PS.map(p=>`<button class="chip ${p===(ME||'Léo')?'sel':''}" data-p="${p}" onclick="document.querySelectorAll('#enp .chip').forEach(c=>c.classList.toggle('sel',c===this))">${p==='Léo'?'🧔':p==='Laura'?'👩':'🏠'} ${p}</button>`).join('')}</div>
   <button class="btn" style="margin-top:10px;width:100%" onclick="addEn()">＋ Adicionar entrada</button></div>`}
 function addEn(){const n=gv('enn').trim();if(!n)return;const p=($('#enp .chip.sel')||{}).dataset;const q=num(gv('enq'));put('en',Object.assign({id:uid(),n,v:num(gv('env')),p:p?p.p:'Casa'},q>1?{q}:{}));toast('💵 Entrada adicionada')}
 function cyP(id){const e=S.en.find(a=>a.id===id);upd('en',id,{p:PS[(PS.indexOf(e.p||'Casa')+1)%3]})}
@@ -288,7 +288,7 @@ function resumo(M){const out=[],pay={};const addP=(q,v)=>{q=q&&q!=='—'?q:'Sem 
 function resV(){const M=resM,r=resumo(M),cur=M===ym(),c=calc(M);
   const cats=[['Contas fixas',r.fixos,'#C96F4A'],...r.poucos.map((p,i)=>[p[0],p[1],['#E0A43A','#D9A066','#B88A4A','#E7B96A'][i%4]]),['Parcelas',r.parc,'#8E6C8A'],['Pontuais',r.pont,'#D47A90']].filter(a=>a[1]>0);
   const base=Math.max(r.ent,r.saiu+r.guard,1),w=v=>Math.max(0,v/base*100);
-  const pcol={'Léo':'var(--leo)','Lica':'var(--lica)','Casa':'var(--mel)'};
+  const pcol={'Léo':'var(--leo)','Laura':'var(--lica)','Casa':'var(--mel)'};
   const maxCat=Math.max(1,...cats.map(a=>a[1]));
   let h=`<div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><button class="mini" onclick="resM=shiftM(resM,-1);render()">◀</button><b class="serif" style="font-size:19px">${mesN(M)}</b><button class="mini" onclick="resM=shiftM(resM,1);render()" ${cur?'disabled style="opacity:.3"':''}>▶</button></div>
   <div class="kpi"><div>💵 Entrou<b>${m$(r.ent)}</b></div><div>🧾 Saiu<b>${m$(r.saiu)}</b></div><div>🫙 Guardado<b>${m$(r.guard)}</b></div><div>${r.sobra>=0?'🌼':'⚠️'} Sobrou<b style="color:${r.sobra<0?'var(--red)':'var(--ink)'}">${m$(r.sobra)}</b></div></div>
@@ -344,18 +344,38 @@ function prazoTag(x){if(!x.prazo)return '';const d=Math.round((new Date(x.prazo+
   return d<0?`<span class="pill hot">atrasada · ${dt}</span>`:d===0?'<span class="pill hot">é hoje!</span>':d===1?'<span class="pill warm">amanhã</span>':d<=3?`<span class="pill warm">em ${d} dias · ${dt}</span>`:`<span class="pill">📅 ${dt}</span>`}
 const UR={1:['🌿','Tranquila'],2:['🌼','Importante'],3:['🔥','Urgente']};
 function licaV(){const ab=S.pend.filter(x=>!x.ok).sort((a,b)=>(late(b)-late(a))||(b.urg-a.urg)||((a.prazo||'9')>(b.prazo||'9')?1:-1)),fe=S.pend.filter(x=>x.ok).sort((a,b)=>(b.okEm||'')>(a.okEm||'')?1:-1);
-  let h=title('🌷','Pendências da Lica','var(--rosa2)',ab.length?`${ab.length} pra resolver`:'Tudo em dia 💛');
+  let h=title('👶','Pendências da Lica','var(--rosa2)',ab.length?`${ab.length} pra resolver`:'Tudo em dia 💛');
   h+=`<div class="card"><input id="pt1" placeholder="O que precisa ser feito?" style="width:100%" onkeydown="if(event.key==='Enter')addPend()">
   <div class="add" style="margin-top:8px"><label class="mut" style="font-size:14px;font-weight:700">Prazo</label><input id="pt2" type="date" class="grow"></div>
   <div class="urg" style="margin-top:8px">${[1,2,3].map(u=>`<button class="u${u} ${newUrg===u?'sel':''}" onclick="newUrg=${u};this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b===this))">${UR[u][0]} ${UR[u][1]}</button>`).join('')}</div>
   <button class="btn" style="width:100%;margin-top:10px;background:var(--rosa)" onclick="addPend()">＋ Adicionar</button></div>`;
-  h+=`<div class="card">${ab.map(x=>`<div class="row pd u${x.urg}" id="pd${x.id}"><button class="ck" onclick="donePend(${x.id},event)"></button><span class="t"><span class="nm" onclick="ren('pend',${x.id})">${esc(x.t)}</span><br><span style="display:inline-flex;gap:5px;flex-wrap:wrap;margin-top:3px"><button class="pill ${x.urg===3?'hot':x.urg===2?'warm':'ok'}" onclick="cyU(${x.id})">${UR[x.urg][0]} ${UR[x.urg][1]}</button>${prazoTag(x)}${x.por&&x.por!=='Lica'?`<small>por ${esc(x.por)}</small>`:''}</span></span><button class="mini" onclick="mvPrazo(${x.id})">📅</button><button class="x" onclick="delC('pend',${x.id})">🗑</button></div>`).join('')||'<div class="empty">Nenhuma pendência. Aproveita! 🌷</div>'}</div>`;
+  h+=`<div class="card">${ab.map(x=>`<div class="row pd u${x.urg}" id="pd${x.id}"><button class="ck" onclick="donePend(${x.id},event)"></button><span class="t"><span class="nm" onclick="ren('pend',${x.id})">${esc(x.t)}</span><br><span style="display:inline-flex;gap:5px;flex-wrap:wrap;margin-top:3px"><button class="pill ${x.urg===3?'hot':x.urg===2?'warm':'ok'}" onclick="cyU(${x.id})">${UR[x.urg][0]} ${UR[x.urg][1]}</button>${prazoTag(x)}${x.por?`<small>por ${esc(x.por)}</small>`:''}</span></span><button class="mini" onclick="mvPrazo(${x.id})">📅</button><button class="x" onclick="delC('pend',${x.id})">🗑</button></div>`).join('')||'<div class="empty">Nenhuma pendência da Lica. Aproveitem! 💛</div>'}</div>`;
   if(fe.length)h+=`<button class="btn ghost" style="width:100%" onclick="showDone=!showDone;render()">${showDone?'Esconder':'Ver'} feitas (${fe.length})</button>${showDone?`<div class="card">${fe.map(x=>`<div class="row done"><button class="ck on" onclick="upd('pend',${x.id},{ok:false})">✓</button><span class="t"><span class="nm">${esc(x.t)}</span><br><small>feita ${x.okEm?x.okEm.slice(8)+'/'+x.okEm.slice(5,7):''}</small></span><button class="x" onclick="del('pend',${x.id})">🗑</button></div>`).join('')}<button class="btn ghost" style="width:100%;margin-top:8px" onclick="if(confirm('Limpar todas as feitas?')){S.pend.filter(x=>x.ok).forEach(x=>del('pend',x.id,1));render()}">🧹 Limpar feitas</button></div>`:''}`;
   return h}
-function addPend(){const t=gv('pt1').trim();if(!t)return;put('pend',{id:uid(),t,prazo:gv('pt2'),urg:newUrg,ok:false,por:ME||''});toast('🌷 Anotado!')}
-function donePend(id,ev){sparkle(ev,'💛');const r=$('#pd'+id);if(r)r.classList.add('gone');setTimeout(()=>{upd('pend',id,{ok:true,okEm:today()});const n=S.pend.filter(x=>!x.ok).length;toast(n?'Feito! 💛 Faltam '+n:'Tudo feito! 🌷🎉');if(!n)confetti(60)},380)}
+function addPend(){const t=gv('pt1').trim();if(!t)return;put('pend',{id:uid(),t,prazo:gv('pt2'),urg:newUrg,ok:false,por:ME||''});toast('👶 Anotado!')}
+function donePend(id,ev){sparkle(ev,'💛');const r=$('#pd'+id);if(r)r.classList.add('gone');setTimeout(()=>{upd('pend',id,{ok:true,okEm:today()});const n=S.pend.filter(x=>!x.ok).length;toast(n?'Feito! 💛 Faltam '+n:'Tudo feito! 👶🎉');if(!n)confetti(60)},380)}
 function cyU(id){const x=S.pend.find(a=>a.id===id);upd('pend',id,{urg:x.urg%3+1})}
 function mvPrazo(id){const x=S.pend.find(a=>a.id===id);openSheet(`<h2 style="margin-top:0">📅 Prazo</h2><p class="mut">${esc(x.t)}</p><input id="np" type="date" value="${x.prazo||''}" style="width:100%"><div class="add" style="margin-top:12px"><button class="btn" style="flex:1" onclick="upd('pend',${id},{prazo:gv('np')});closeSheet()">Salvar</button><button class="btn ghost" onclick="upd('pend',${id},{prazo:''});closeSheet()">Sem prazo</button></div>`)}
+
+/* ================== lavanderia ================== */
+function lavM(M){const e=tt(S.len.filter(x=>(x.d||'').startsWith(M)),x=>x.v),f=tt(S.lfx,x=>x.v),p=tt(S.lpt.filter(x=>(x.d||'').startsWith(M)),x=>x.v),pago=tt(S.lfx.filter(x=>pgOf(x,M)),x=>x.v);return{e,f,p,pago,falta:f-pago,r:e-f,l:e-f-p}}
+function lavTile(){if(!S.lfx.length&&!S.len.length)return `<button class="tile big" style="background:var(--card)" onclick="go('lav')"><span style="font-weight:700">🧺 Lavanderia</span><small>Toque pra ver as finanças da lavanderia</small></button>`;
+  const M=ym(),c=lavM(M),prox=S.lfx.filter(x=>!pgOf(x,M)&&x.dia).sort((a,b)=>a.dia-b.dia)[0];
+  return `<button class="tile big" style="background:linear-gradient(135deg,#F2F6FB,#E3ECF7)" onclick="go('lav')"><span style="font-weight:700">🧺 Lavanderia · ${MES[+M.slice(5)-1]}</span><div class="kpi"><div>⏳ Falta pagar<b>${m$(c.falta)}</b></div><div>💵 Entrou<b>${m$(c.e)}</b></div></div>${prox?`<small style="margin-top:6px">Próxima conta: ${esc(prox.n)} · ${venc(prox,M)}</small>`:''}</button>`}
+function lavV(){const M=lm,c=lavM(M),cur=M===ym(),df=cur?today():M+'-01',byM=k=>S[k].filter(x=>(x.d||'').startsWith(M)).sort((a,b)=>a.d<b.d?1:-1),E=byM('len'),P=byM('lpt');
+  const lrow=(k,x)=>`<div class="row"><span class="t"><b onclick="ren('${k}',${x.id})">${esc(x.n)}</b><br><small>📅 ${x.d.slice(8)}/${x.d.slice(5,7)}</small> ${who(x.por)}</span><div class="ctl"><input class="num" inputmode="decimal" value="${x.v}" onchange="upd('${k}',${x.id},{v:num(this.value)})"></div><button class="x" onclick="delC('${k}',${x.id})">🗑</button></div>`;
+  let h=`<button class="mini" style="margin-top:6px" onclick="go('home')">‹ Início</button>`+title('🧺','Lavanderia','#E3ECF7','Finanças da lavanderia, mês a mês');
+  h+=`<div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><button class="mini" onclick="lm=shiftM(lm,-1);render()">◀</button><b class="serif" style="font-size:19px">${mesN(M)}</b><button class="mini" onclick="lm=shiftM(lm,1);render()">▶</button></div>
+  <div class="kpi"><div>💵 Entradas<b>${m$(c.e)}</b></div><div>📌 Custos fixos<b>${m$(c.f)}</b></div><div>${c.r>=0?'🎉':'⚠️'} Entradas − fixos<b style="color:${c.r<0?'var(--red)':'var(--ink)'}">${m$(c.r)}</b></div><div>🎈 Pontuais<b>${m$(c.p)}</b></div><div class="wide">🧮 Depois dos pontuais<b style="color:${c.l<0?'var(--red)':'var(--ink)'}">${m$(c.l)}</b></div></div></div>`;
+  h+=`<h2>📌 Custos fixos</h2><div class="card"><small>Valem todo mês. Marque quando pagar; o vencimento avisa quando está perto.</small>${S.lfx.slice().sort((a,b)=>(a.dia||99)-(b.dia||99)).map(x=>{const p=pgOf(x,M);return `<div class="row ${p?'done':''}"><button class="ck ${p?'on':''}" onclick="lfxPay(${x.id},event)">${p?'✓':''}</button><span class="t"><b onclick="ren('lfx',${x.id})">${esc(x.n)}</b><br>${cur?venc(x,M):(x.dia?`<small>${p?'✔ pago · ':''}vence dia ${x.dia}</small> ${p?who(p):''}`:'<small>sem vencimento</small>')}</span><div class="ctl"><input class="num" inputmode="decimal" value="${x.v}" onchange="upd('lfx',${x.id},{v:num(this.value)})"><input class="num" style="width:58px" inputmode="numeric" placeholder="dia" value="${x.dia||''}" onchange="upd('lfx',${x.id},{dia:Math.min(31,num(this.value))})"></div><button class="x" onclick="delC('lfx',${x.id})">🗑</button></div>`}).join('')||'<div class="empty">Nenhum custo fixo ainda.</div>'}
+  <div class="total">✅ Pago: <b>${m$(c.pago)}</b> · ⏳ Falta pagar: <b>${m$(c.falta)}</b></div>
+  <div class="add" style="margin-top:10px"><input id="lfxN" placeholder="Novo custo fixo"><input id="lfxV" class="num" inputmode="decimal" placeholder="Valor"><input id="lfxD" style="width:74px" inputmode="numeric" placeholder="Dia"><button class="btn" onclick="if(gv('lfxN').trim())put('lfx',{id:uid(),n:gv('lfxN').trim(),v:num(gv('lfxV')),dia:Math.min(31,num(gv('lfxD'))),pgs:{}})">＋</button></div></div>`;
+  h+=`<h2>💵 Entradas: ${m$(c.e)}</h2><div class="card">${E.map(x=>lrow('len',x)).join('')||'<div class="empty">Nenhuma entrada neste mês.</div>'}
+  <div class="add" style="margin-top:10px"><input id="lenN" placeholder="De onde? (ex.: máquinas, semana 1)"><input id="lenV" class="num" inputmode="decimal" placeholder="Valor"><input id="lenD" type="date" value="${df}"><button class="btn" onclick="if(num(gv('lenV')))put('len',{id:uid(),n:gv('lenN').trim()||'Entrada',v:num(gv('lenV')),d:gv('lenD')||'${df}',por:ME})">＋</button></div></div>`;
+  h+=`<h2>🎈 Custos pontuais: ${m$(c.p)}</h2><div class="card"><small>Gastos só deste mês (conserto, manutenção…)</small>${P.map(x=>lrow('lpt',x)).join('')||'<div class="empty">Nenhum custo pontual neste mês.</div>'}
+  <div class="add" style="margin-top:10px"><input id="lptN" placeholder="O que foi?"><input id="lptV" class="num" inputmode="decimal" placeholder="Valor"><input id="lptD" type="date" value="${df}"><button class="btn" onclick="if(gv('lptN').trim())put('lpt',{id:uid(),n:gv('lptN').trim(),v:num(gv('lptV')),d:gv('lptD')||'${df}',por:ME})">＋</button></div></div>`;
+  return h}
+function lfxPay(id,ev){const x=S.lfx.find(a=>a.id===id),M=lm,p=Object.assign({},x.pgs);if(p[M])delete p[M];else{p[M]=ME||'—';sparkle(ev,'💸');toast('💸 Conta paga!')}upd('lfx',id,{pgs:p})}
 
 /* ================== mercado ================== */
 function mercV(){const inL=new Set(S.merc.map(x=>nrm(x.t)));const fq=S.freq.filter(f=>!inL.has(nrm(f.t))).sort((a,b)=>b.c-a.c).slice(0,14);window.__fq=fq;
@@ -375,7 +395,7 @@ function rmMerc(id){const r=$('#mk'+id);if(r){r.style.transition='all .25s';r.st
 function openSheet(h){$('#sheetIn').innerHTML=h;$('#sheet').classList.add('open')}
 function closeSheet(){$('#sheet').classList.remove('open')}
 function openSet(){openSheet(`<h2 style="margin-top:0">⚙️ Ajustes</h2>
-  <div class="card"><b>Neste celular quem usa é:</b><div class="add" style="margin-top:8px"><button class="chip ${ME==='Léo'?'sel':''}" onclick="setMe('Léo')">🧔 Léo</button><button class="chip ${ME==='Lica'?'sel':''}" onclick="setMe('Lica')">👩 Lica</button></div>${store.email?`<small style="display:block;margin-top:8px">Conectado como ${esc(store.email)}</small>`:''}</div>
+  <div class="card"><b>Neste celular quem usa é:</b><div class="add" style="margin-top:8px"><button class="chip ${ME==='Léo'?'sel':''}" onclick="setMe('Léo')">🧔 Léo</button><button class="chip ${ME==='Laura'?'sel':''}" onclick="setMe('Laura')">👩 Laura</button></div>${store.email?`<small style="display:block;margin-top:8px">Conectado como ${esc(store.email)}</small>`:''}</div>
   <div class="card"><b>🏠 Trazer do Meu Dinheiro</b><p class="mut" style="margin:4px 0 10px">Escolha o backup do seu app pessoal (Início › Ajustes › Exportar). Você marca só o que é da casa.</p><button class="btn" onclick="impStart()">📂 Escolher backup</button></div>
   <div class="card"><b>💾 Backup do Nosso Lar</b><div class="add" style="margin-top:8px"><button class="btn soft" onclick="exportar()">Baixar backup</button><button class="btn ghost" onclick="restaurar()">Restaurar</button></div></div>
   ${store.remote?`<button class="btn ghost" style="width:100%" onclick="store.remote.logout()">🚪 Sair da conta</button>`:''}
@@ -389,24 +409,28 @@ let IMP=null;
 function impStart(){pickFile(o=>{if(!o.fx&&!o.pc&&!o.en)return alert('Esse arquivo não parece o backup do seu app pessoal.');IMP=o;
   const has=(col,n)=>S[col].some(a=>nrm(a.n)===nrm(n)),M=ym();
   const sec=(t,col,arr,def,sub)=>arr.length?`<h2>${t}</h2><div class="card imp">${arr.map((x,i)=>{const dup=has(col,x.n);return `<label><input type="checkbox" data-c="${col}" data-i="${i}" ${!dup&&def(x)?'checked':''} ${dup?'disabled':''}><span class="t" style="flex:1"><b>${esc(x.n)}</b><br><small>${sub(x)}${dup?' · já está no app':''}</small></span></label>`}).join('')}</div>`:'';
-  const fx=o.fx||[],pc=(o.pc||[]).filter(x=>(+x.f||0)>0||x.pg===M),pt=(o.pt||[]).filter(x=>!x.ok),en=(o.en||[]).filter(x=>!x.auto);IMP.l={fx,pc,pt,en};
+  const fx=o.fx||[],pc=(o.pc||[]).filter(x=>(+x.f||0)>0||x.pg===M),pt=(o.pt||[]).filter(x=>!x.ok),en=(o.en||[]).filter(x=>!x.auto);const lfx=o.lfx||[],lh=(o.len||[]).length+(o.lpt||[]).length;IMP.l={fx,pc,pt,en,lfx,lavh:[0]};
   openSheet(`<h2 style="margin-top:0">🏠 O que é da casa?</h2><p class="mut">Já deixei marcado o que parece ser da casa. Ajuste do seu jeito. O seu app pessoal não muda nada.</p>
   ${sec('🏠 Contas fixas e gastos aos poucos','fx',fx,x=>HOUSEY.test(nrm(x.n)),x=>m$(x.v)+(x.gr?' · aos poucos':'')+(x.dia?' · dia '+x.dia:''))}
   ${sec('💳 Parcelas','pc',pc,x=>HOUSEY.test(nrm(x.n)),x=>m$(x.v)+' · faltam '+x.f)}
   ${sec('🎯 Pontuais','pt',pt,()=>false,x=>m$(x.v))}
   ${sec('💵 Entradas','en',en,()=>false,x=>m$(x.v*(x.q||1))+' por mês')}
+  ${sec('🧺 Lavanderia: custos fixos','lfx',lfx,()=>true,x=>m$(x.v)+(x.dia?' · dia '+x.dia:''))}
+  ${lh?`<div class="card imp"><label><input type="checkbox" data-c="lavh" data-i="0" checked><span class="t" style="flex:1"><b>🧺 Entradas e custos pontuais da lavanderia</b><br><small>${lh} lançamento(s), com as datas</small></span></label></div>`:''}
   <p class="mut" style="font-size:14px">💡 Em vez de trazer suas entradas, você pode cadastrar em <b>Entradas</b> só o valor que cada um coloca na casa.</p>
   <div class="add" style="position:sticky;bottom:0;background:var(--bg);padding:10px 0"><button class="btn" style="flex:1;padding:14px" onclick="impDo()">Trazer selecionados</button><button class="btn ghost" onclick="closeSheet()">Cancelar</button></div>`)})}
 function impDo(){const M=ym();let n=0;document.querySelectorAll('#sheetIn input[type=checkbox]:checked').forEach((c,k)=>{const col=c.dataset.c,x=IMP.l[col][+c.dataset.i],id=uid()+k;let o;
   if(col==='fx'){const gs={};Object.entries(x.gs||{}).forEach(([m,l])=>gs[m]=(l||[]).map(a=>({v:+a.v||0,d:a.d||m+'-01',q:a.q||'Léo'})));o={id,n:x.n,v:+x.v||0,dia:+x.dia||0,gr:!!x.gr,gs,pgs:x.pg?{[x.pg]:'Léo'}:{}}}
   else if(col==='pc')o={id,n:x.n,v:+x.v||0,f:+x.f||0,pgs:x.pg?{[x.pg]:'Léo'}:{}};
   else if(col==='pt')o={id,n:x.n,v:+x.v||0,ok:false,por:'Léo'};
+  else if(col==='lfx'){const pgs={};(x.pm||[]).forEach(m=>pgs[m]='Léo');o={id,n:x.n,v:+x.v||0,dia:+x.dia||0,pgs}}
+  else if(col==='lavh'){['len','lpt'].forEach(kk=>(IMP[kk]||[]).forEach((y,j)=>{if(S[kk].some(a=>a.n===y.n&&a.d===y.d&&+a.v===+y.v))return;put(kk,{id:uid()+k*1000+j+(kk==='lpt'?500:0),n:y.n||'Entrada',v:+y.v||0,d:y.d||today(),por:'Léo'},1);n++}));return}
   else o=Object.assign({id,n:x.n,v:+x.v||0,p:'Léo'},x.q?{q:+x.q}:{});
   put(col,o,1);n++});closeSheet();IMP=null;render();if(n){toast('🏡 '+n+' item(ns) trazidos pra casa!');confetti(40)}}
 
 /* ================== render ================== */
 function render(){if(!booted)return;pendingRender=false;
-  const V={home,fin,cx:cxV,lica:licaV,merc:mercV};$('#app').innerHTML=(tab!=='home'&&syncMsg?`<div class="sync">${syncMsg}</div>`:'')+V[tab]();nav();
+  const V={home,fin,cx:cxV,lica:licaV,merc:mercV,lav:lavV};$('#app').innerHTML=(tab!=='home'&&syncMsg?`<div class="sync">${syncMsg}</div>`:'')+V[tab]();nav();
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.liq').forEach(g=>{g.style.transform=`translateY(${g.dataset.to}px)`;const id=+g.dataset.id,x=S.cx.find(a=>a.id===id);if(x)prevPct[id]=pctOf(x)})))}
 function boot(){booted=true;try{ME=store.fixedMe||localStorage.getItem('nl-me')||''}catch(e){}if(store.fixedMe)ME=store.fixedMe;render();if(!ME)setTimeout(askMe,400)}
 window.NL={S,COLS,store,render,remoteRender,boot,setSync:t=>{syncMsg=t;render()}};
@@ -421,7 +445,7 @@ window.NL.showLogin=showLogin;
 /* ============ FIREBASE (cole aqui o firebaseConfig do projeto Nosso Lar) ============ */
 const firebaseConfig={apiKey:"AIzaSyDlKWHd_n6DqZw8yDSxOt2PjxL5uFR15uM",authDomain:"casa-da-lica.firebaseapp.com",projectId:"casa-da-lica",storageBucket:"casa-da-lica.firebasestorage.app",messagingSenderId:"217314546687",appId:"1:217314546687:web:d5bb2e66bdbcbe21e50dca"};
 /* e-mail de cada um → nome que aparece no app */
-const PESSOAS={"paivaleonardo036@gmail.com":"Léo" /* , "email-da-lica@...":"Lica" */};
+const PESSOAS={"paivaleonardo036@gmail.com":"Léo","marialaurasoaresdepinho@gmail.com":"Laura"};
 
 const NL=window.NL;
 if(firebaseConfig.apiKey.startsWith('COLE')){
@@ -433,14 +457,14 @@ if(firebaseConfig.apiKey.startsWith('COLE')){
   const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
   try{await setPersistence(auth,browserLocalPersistence)}catch(e){}
   let unsubs=[];
-  const err=e=>NL.setSync('⚠️ Não consegui salvar: '+(e.code||e.message||'erro')+'. Confira a internet.');
+  const err=e=>NL.setSync((e.code||'').includes('permission')?'🔒 Sem permissão pra salvar com o e-mail '+(auth.currentUser&&auth.currentUser.email)+'. Ele precisa estar nas Regras do Firestore.':'⚠️ Não consegui salvar ('+(e.code||e.message||'erro')+'). Confira a internet.');
   onAuthStateChanged(auth,u=>{unsubs.forEach(f=>f());unsubs=[];
     if(!u){NL.showLogin((e,p)=>signInWithEmailAndPassword(auth,e,p));return}
     NL.store.email=u.email;NL.store.fixedMe=PESSOAS[(u.email||'').toLowerCase()]||'';
     NL.store.remote={put:(c,o)=>setDoc(doc(db,c,String(o.id)),JSON.parse(JSON.stringify(o))).catch(err),del:(c,id)=>deleteDoc(doc(db,c,String(id))).catch(err),logout:()=>signOut(auth)};
     NL.COLS.forEach(c=>NL.S[c]=[]);NL.boot();
     NL.COLS.forEach(c=>unsubs.push(onSnapshot(collection(db,c),sn=>{NL.S[c]=sn.docs.map(d=>Object.assign({},d.data(),{id:/^\d+$/.test(d.id)?Number(d.id):d.id}));NL.remoteRender()},
-      e=>NL.setSync('⚠️ Sem acesso ao banco ('+(e.code||'erro')+'). Confira as regras do Firestore.'))));
+      e=>NL.setSync('🔒 Sem acesso ao banco com o e-mail '+u.email+' ('+(e.code||'erro')+'). Ele precisa estar nas Regras do Firestore.'))));
   });
 }
 </script>
