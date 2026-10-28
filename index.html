@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nosso Lar</title>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<meta name="theme-color" content="#FBF5EC">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FBF5EC;--card:#FFFDF9;--ink:#3B2F27;--mut:#8C7D70;--line:#EFE3D3;--terra:#C96F4A;--terra2:#F7E0D3;--sage:#6F8F72;--sage2:#E1EBDD;--mel:#E0A43A;--mel2:#FBEDCC;--rosa:#D47A90;--rosa2:#F9E1E7;--red:#C4473C;--red2:#F8DEDA;--leo:#5F8A6A;--lica:#D47A90;--sh:0 1px 2px rgba(80,50,20,.05),0 8px 22px rgba(80,50,20,.07)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.4}
+body{padding:env(safe-area-inset-top,0) 0 calc(92px + env(safe-area-inset-bottom,0))}
+#app{max-width:620px;margin:0 auto;padding:12px 16px 24px}
+h1,h2,.serif{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.01em}
+h1{font-size:28px;margin:0}
+h2{font-size:19px;margin:22px 4px 8px;display:flex;align-items:center;gap:8px}
+small,.mut{color:var(--mut)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 13px;outline:none;min-width:0}
+input:focus,textarea:focus,select:focus{border-color:var(--terra)}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:16px;margin:10px 0;border:1px solid rgba(239,227,211,.7)}
+.btn{background:var(--terra);color:#fff;font-weight:800;border-radius:14px;padding:11px 16px;white-space:nowrap;transition:transform .12s}
+.btn:active,.tile:active,.chip:active{transform:scale(.96)}
+.btn.soft{background:var(--terra2);color:var(--terra)}
+.btn.sage{background:var(--sage)}
+.btn.ghost{background:transparent;color:var(--mut);border:1.5px solid var(--line)}
+.add{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.add>input:first-child,.add>.grow{flex:1 1 160px}
+.num{width:108px;text-align:right}
+.row{display:flex;align-items:center;gap:10px;padding:12px 2px;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.row{flex-wrap:wrap}.row .t{flex:1 1 0}
+.ctl{order:3;flex-basis:100%;display:flex;gap:6px;align-items:center;padding-left:40px;flex-wrap:wrap}
+.ctl .num{width:120px}
+.row .t{flex:1;min-width:0;overflow-wrap:anywhere}
+.row.done .t>b,.row.done .t>span.nm{text-decoration:line-through;color:var(--mut)}
+.ck{width:30px;height:30px;flex:none;border-radius:50%;border:2px solid #D9C9B4;display:grid;place-items:center;background:#fff;transition:all .2s;font-size:15px;color:#fff}
+.ck.on{background:var(--sage);border-color:var(--sage)}
+.x{font-size:17px;padding:6px;opacity:.55;flex:none}
+.x:active{opacity:1}
+.mini{background:var(--bg);border-radius:10px;padding:6px 9px;font-size:14px;flex:none}
+.pill{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--bg);color:var(--mut);white-space:nowrap}
+.pill.hot{background:var(--red2);color:var(--red)}
+.pill.warm{background:var(--mel2);color:#9A6A12}
+.pill.ok{background:var(--sage2);color:var(--sage)}
+.who{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;vertical-align:1px}
+.who.le{background:var(--sage2);color:var(--leo)}
+.who.li{background:var(--rosa2);color:#B4566E}
+.who.ca{background:var(--mel2);color:#9A6A12}
+.empty{color:var(--mut);text-align:center;padding:18px 8px}
+.total{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:15px}
+.seg{display:flex;gap:6px;background:#F3E9DB;padding:4px;border-radius:16px;margin:4px 0 6px;overflow-x:auto}
+.seg button{flex:1;padding:8px 2px;border-radius:12px;font-weight:700;font-size:12.5px;color:var(--mut);white-space:nowrap}
+.seg button.sel{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(80,50,20,.1)}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.kpi div{background:var(--bg);border-radius:16px;padding:10px 12px;font-size:13px;color:var(--mut)}
+.kpi b{display:block;color:var(--ink);font-size:18px;font-family:Fraunces,serif;font-weight:600}
+.kpi .wide{grid-column:1/-1}
+.bar{height:10px;border-radius:999px;background:#F1E6D7;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+/* topo */
+.hero{display:flex;align-items:center;gap:12px;margin:6px 0 10px}
+.hero svg{flex:none}
+.hero h1{font-size:30px;line-height:1}
+.gear{margin-left:auto;font-size:22px;background:var(--card);width:44px;height:44px;border-radius:14px;box-shadow:var(--sh)}
+.pagetitle{display:flex;align-items:center;gap:10px;margin:8px 0 10px}
+.pagetitle .ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:22px}
+/* home */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{text-align:left;background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--sh);border:1px solid rgba(239,227,211,.7);display:flex;flex-direction:column;gap:4px;transition:transform .12s;min-height:118px}
+.tile .e{font-size:26px}
+.tile b.n{font-family:Fraunces,serif;font-size:26px;font-weight:600;line-height:1.1}
+.tile.big{grid-column:1/-1;background:linear-gradient(135deg,#FFF7EC,#FBE7D9);min-height:0}
+.tile.big .kpi div{background:rgba(255,255,255,.75)}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,253,249,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0));z-index:20}
+nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:var(--mut);padding:4px 6px;border-radius:14px;min-width:58px}
+nav button span{font-size:22px;transition:transform .2s}
+nav button.sel{color:var(--terra)}
+nav button.sel span{transform:translateY(-2px) scale(1.12)}
+/* caixinhas */
+.cx{display:flex;gap:14px;align-items:center}
+.jar{width:84px;height:100px;flex:none;overflow:visible}
+.cx .info{flex:1;min-width:0}
+.cx .nm{font-family:Fraunces,serif;font-size:19px;font-weight:600}
+.cx .bar{height:14px;margin:8px 0 6px}
+.cx .bar i{background:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 8px,transparent 8px 16px),var(--c);background-size:22px 22px,auto;animation:stripes 1.2s linear infinite}
+@keyframes stripes{to{background-position:22px 0,0 0}}
+.wave{animation:wave 2.6s linear infinite}
+.wave2{animation:wave 3.8s linear infinite reverse;opacity:.5}
+@keyframes wave{from{transform:translateX(0)}to{transform:translateX(-60px)}}
+.liq{transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.bob{animation:bob 3s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes bob{50%{transform:translateY(-3px) rotate(-4deg)}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:7px 12px;font-weight:700;font-size:14px;transition:transform .12s}
+.chip.sel{border-color:var(--terra);background:var(--terra2);color:var(--terra)}
+.mov{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.mov.open{display:block;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(-6px)}}
+.coin{position:fixed;font-size:26px;z-index:60;pointer-events:none;animation:coin .9s cubic-bezier(.5,0,.75,0) forwards}
+@keyframes coin{from{transform:translateY(-90px) rotate(0);opacity:0}20%{opacity:1}to{transform:translateY(0) rotate(360deg);opacity:0}}
+/* pendências */
+.urg{display:flex;gap:6px}
+.urg button{flex:1;padding:10px 4px;border-radius:14px;border:1.5px solid var(--line);font-weight:700;font-size:13px;background:#fff;white-space:nowrap}
+.urg button.sel.u1{background:var(--sage2);border-color:var(--sage);color:var(--sage)}
+.urg button.sel.u2{background:var(--mel2);border-color:var(--mel);color:#9A6A12}
+.urg button.sel.u3{background:var(--red2);border-color:var(--red);color:var(--red)}
+.pd{border-left:5px solid transparent;padding-left:10px}
+.pd.u1{border-color:var(--sage)}.pd.u2{border-color:var(--mel)}.pd.u3{border-color:var(--red)}
+.pd.gone{animation:gone .45s ease forwards}
+@keyframes gone{to{opacity:0;transform:translateX(30px);height:0;padding:0}}
+/* mercado */
+.mk{font-size:17px;padding:14px 2px}
+.mk .x{opacity:.7;font-size:20px;background:var(--bg);border-radius:12px;width:42px;height:42px}
+/* sheet */
+#sheet{position:fixed;inset:0;background:rgba(59,47,39,.35);z-index:40;display:none;align-items:flex-end;justify-content:center}
+#sheet.open{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+#sheet .in{background:var(--bg);width:100%;max-width:620px;max-height:88vh;overflow:auto;border-radius:26px 26px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom,0));animation:up .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(40px)}}
+#toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:16px;font-weight:700;opacity:0;transition:all .3s;z-index:70;max-width:90vw;text-align:center;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.cf{position:fixed;top:-20px;z-index:65;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.sync{font-size:13px;text-align:center;color:var(--mut);padding:6px 10px;background:var(--mel2);border-radius:12px;margin:4px 0 8px}
+/* login */
+.login{max-width:380px;margin:12vh auto 0;text-align:center;padding:0 20px}
+.login input{width:100%;margin:6px 0}
+.login .btn{width:100%;margin-top:8px;padding:14px}
+.flow{display:flex;height:22px;border-radius:999px;overflow:hidden;background:#F1E6D7;margin:6px 0}
+.flow i{height:100%;transition:width .9s}
+.leg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--mut);margin-top:6px}
+.leg span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.lrow{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:15px}
+.lrow .lb{width:118px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lrow .bar{flex:1}
+.lrow b{width:96px;text-align:right;flex:none;font-size:14px}
+.imp label{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px dashed var(--line)}
+.imp input[type=checkbox]{width:22px;height:22px;accent-color:var(--terra)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="nav"></nav>
+<div id="sheet" onclick="if(event.target===this)closeSheet()"><div class="in" id="sheetIn"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ================== base ================== */
+const $=s=>document.querySelector(s),gv=i=>($('#'+i)||{}).value||'';
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const m$=v=>(+v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const num=s=>{s=String(s==null?'':s).replace(/[R$\s]/g,'');if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');return +s||0};
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const ym=()=>today().slice(0,7);
+const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const mesN=M=>MES[+M.slice(5)-1]+' '+M.slice(0,4);
+const shiftM=(M,d)=>{const x=new Date(+M.slice(0,4),+M.slice(5)-1+d,1);return x.getFullYear()+'-'+pad(x.getMonth()+1)};
+const uid=()=>Date.now()*1000+Math.floor(Math.random()*1000);
+const tt=(a,f)=>a.reduce((s,x)=>s+(+f(x)||0),0);
+const nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+const COLS=['fx','pc','pt','en','cx','pend','merc','freq'];
+const LK='nosso-lar-v1';
+let S={};COLS.forEach(c=>S[c]=[]);
+let ME='',tab='home',fsub='res',resM=ym(),newUrg=2,openMov=null,showDone=false,syncMsg='',booted=false;
+const prevPct={};
+
+/* ================== dados ================== */
+const store={remote:null,
+  loadLocal(){try{const r=JSON.parse(localStorage.getItem(LK)||'null');if(r)COLS.forEach(c=>S[c]=r[c]||[])}catch(e){}},
+  saveLocal(){if(!this.remote)try{localStorage.setItem(LK,JSON.stringify(S))}catch(e){}}};
+function put(col,o,quiet){const a=S[col],i=a.findIndex(x=>x.id===o.id);if(i>=0)a[i]=o;else a.push(o);
+  if(store.remote)store.remote.put(col,o);else store.saveLocal();if(!quiet)render()}
+function upd(col,id,patch){const x=S[col].find(a=>a.id===id);if(!x)return;put(col,Object.assign({},x,patch))}
+function del(col,id,quiet){S[col]=S[col].filter(x=>x.id!==id);if(store.remote)store.remote.del(col,id);else store.saveLocal();if(!quiet)render()}
+function ren(col,id){const x=S[col].find(a=>a.id===id);if(!x)return;const k=x.n!=null?'n':'t';const v=prompt('Novo nome:',x[k]);if(v&&v.trim())upd(col,id,{[k]:v.trim()})}
+function delC(col,id,what){if(confirm('Apagar '+(what||'este item')+'?'))del(col,id)}
+let pendingRender=false;
+function remoteRender(){const a=document.activeElement;if(a&&a.closest&&a.closest('#app')&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value){pendingRender=true;return}render()}
+document.addEventListener('focusout',()=>{if(pendingRender){pendingRender=false;setTimeout(()=>{const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)&&a.value){pendingRender=true;return}render()},350)}});
+
+/* ================== efeitos ================== */
+let tT;function toast(t){const e=$('#toast');e.innerHTML=t;e.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>e.classList.remove('on'),2300)}
+function confetti(n){n=n||70;const em=['🎉','💛','🏡','✨','🌼','🧡','🎈'],cs=['#C96F4A','#6F8F72','#E0A43A','#D47A90','#F2C9A0'];
+  for(let i=0;i<n;i++){const s=document.createElement('div');s.className='cf';const isE=Math.random()<.35;
+    if(isE){s.textContent=em[i%em.length];s.style.fontSize=(16+Math.random()*14)+'px'}else{s.style.width=s.style.height=(6+Math.random()*7)+'px';s.style.background=cs[i%cs.length];s.style.borderRadius=Math.random()<.5?'50%':'2px'}
+    s.style.left=Math.random()*100+'vw';s.style.animationDuration=(1.8+Math.random()*1.8)+'s';s.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),4400)}}
+function sparkle(ev,em){const x=ev&&ev.clientX!=null?ev.clientX:innerWidth/2,y=ev&&ev.clientY!=null?ev.clientY:innerHeight/2;
+  for(let i=0;i<9;i++){const s=document.createElement('div');s.textContent=em||'✨';s.style.cssText=`position:fixed;left:${x}px;top:${y}px;z-index:66;pointer-events:none;font-size:18px;transition:all .7s cubic-bezier(.2,.8,.2,1)`;document.body.appendChild(s);
+    const a=Math.PI*2*i/9,r=40+Math.random()*30;requestAnimationFrame(()=>{s.style.transform=`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) scale(.6)`;s.style.opacity=0});setTimeout(()=>s.remove(),800)}}
+
+/* ================== pessoas ================== */
+const who=q=>q?`<span class="who ${q==='Lica'?'li':q==='Léo'?'le':'ca'}">${esc(q)}</span>`:'';
+function setMe(n){ME=n;try{localStorage.setItem('nl-me',n)}catch(e){}closeSheet();render();toast('Oi, '+n+'! 💛')}
+function askMe(){openSheet(`<h2 style="margin-top:0">Quem está usando este celular?</h2><p class="mut">Assim o app mostra quem lançou e pagou cada coisa.</p><div class="add"><button class="btn sage" style="flex:1;padding:16px" onclick="setMe('Léo')">🧔 Léo</button><button class="btn" style="flex:1;padding:16px;background:var(--rosa)" onclick="setMe('Lica')">👩 Lica</button></div>`)}
+
+/* ================== cálculos ================== */
+const gsL=(x,M)=>((x.gs||{})[M])||[],gsT=(x,M)=>tt(gsL(x,M),a=>a.v);
+const pgOf=(x,M)=>(x.pgs||{})[M];
+function calc(M){const fx=S.fx,pc=S.pc.filter(x=>x.f>0||pgOf(x,M));
+  const fv=x=>x.gr?Math.max(+x.v||0,gsT(x,M)):+x.v||0,fp=x=>x.gr?gsT(x,M):(pgOf(x,M)?+x.v||0:0);
+  const ent=tt(S.en,e=>e.v*(e.q||1)),cont=tt(fx,fv)+tt(pc,x=>x.v),pago=tt(fx,fp)+tt(pc.filter(x=>pgOf(x,M)),x=>x.v),pont=tt(S.pt.filter(x=>!x.ok),x=>x.v);
+  return {M,pc,ent,cont,pago,pont,sobra:ent-cont-pont,falta:cont-pago+pont}}
+function venc(x,M){const p=pgOf(x,M);if(!x.dia)return p?`<small>✔ pago</small> ${who(p)}`:'<small>sem vencimento</small>';
+  const last=new Date(+M.slice(0,4),+M.slice(5),0).getDate(),dd=Math.min(x.dia,last),diff=dd-(+today().slice(8));
+  if(p)return `<small>✔ pago · dia ${dd}</small> ${who(p)}`;
+  return diff<0?`<span class="pill hot">venceu dia ${dd}</span>`:diff===0?'<span class="pill hot">vence HOJE</span>':diff<=3?`<span class="pill warm">vence em ${diff} dia(s)</span>`:`<small>vence dia ${dd}</small>`}
+
+/* ================== navegação ================== */
+const TABS=[['home','🏡','Início'],['fin','💰','Finanças'],['cx','🫙','Caixinhas'],['lica','🌷','Lica'],['merc','🛒','Mercado']];
+function go(t,s){tab=t;if(s)fsub=s;openMov=null;render();scrollTo(0,0)}
+function fs(s){fsub=s;render()}
+function nav(){$('#nav').innerHTML=TABS.map(([k,e,n])=>`<button class="${tab===k?'sel':''}" onclick="go('${k}')"><span>${e}</span>${n}</button>`).join('')}
+function title(e,n,bg,sub){return `<div class="pagetitle"><div class="ic" style="background:${bg}">${e}</div><div><h1 style="font-size:25px">${n}</h1>${sub?`<small>${sub}</small>`:''}</div></div>`}
+
+/* ================== início ================== */
+const HOUSE=`<svg width="58" height="58" viewBox="0 0 64 64"><circle cx="32" cy="34" r="29" fill="#F7E0D3"/><path d="M14 31 L32 15 L50 31" fill="none" stroke="#C96F4A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 29 V48 Q19 50 21 50 H43 Q45 50 45 48 V29" fill="#FFFDF9" stroke="#C96F4A" stroke-width="3" stroke-linejoin="round"/><rect x="40" y="16" width="5" height="9" rx="1.5" fill="#C96F4A"/><path class="bob" d="M32 44 C26 39 25.5 35.5 28 33.8 C30 32.5 31.5 33.6 32 35 C32.5 33.6 34 32.5 36 33.8 C38.5 35.5 38 39 32 44Z" fill="#D47A90"/></svg>`;
+function home(){const c=calc(ym()),h=new Date().getHours(),sa=h<5?'Boa madrugada':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  const pa=S.pend.filter(x=>!x.ok),urg=pa.filter(x=>x.urg===3||late(x)).length;
+  const cxs=S.cx.slice().sort((a,b)=>pctOf(b)-pctOf(a)).slice(0,3);
+  let o=`<div class="hero">${HOUSE}<div><small>${sa}${ME?', '+ME:''} ✨</small><h1>Nosso Lar</h1></div><button class="gear" onclick="openSet()">⚙️</button></div>${syncMsg?`<div class="sync">${syncMsg}</div>`:''}`;
+  if(!S.fx.length&&!S.en.length&&!S.pc.length)o+=`<div class="card" style="background:var(--terra2)"><b class="serif" style="font-size:18px">Vamos começar? 🏡</b><p style="margin:6px 0 12px">Traga as contas da casa do seu Meu Dinheiro. Você escolhe o que entra, item por item.</p><button class="btn" onclick="impStart()">📂 Trazer do Meu Dinheiro</button></div>`;
+  o+=`<div class="tiles"><button class="tile big" onclick="go('fin','mes')"><span class="mut" style="font-weight:700">💰 ${mesN(c.M)}</span><div class="kpi"><div>⏳ Falta pagar<b>${m$(c.falta)}</b></div><div>${c.sobra>=0?'🌼':'⚠️'} Sobra no mês<b style="color:${c.sobra<0?'var(--red)':'var(--ink)'}">${m$(c.sobra)}</b></div></div></button>
+  <button class="tile" onclick="go('lica')"><span class="e">🌷</span><b class="n">${pa.length}</b><span>pendência${pa.length===1?'':'s'} da Lica</span>${urg?`<span class="pill hot">🔥 ${urg} pra já</span>`:''}</button>
+  <button class="tile" onclick="go('merc')"><span class="e">🛒</span><b class="n">${S.merc.length}</b><span>no mercado</span>${S.merc.length?`<small style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">${esc(S.merc.slice(-3).map(x=>x.t).join(', '))}</small>`:''}</button></div>`;
+  o+=`<h2>🫙 Nossas caixinhas</h2><div class="card">${cxs.map(x=>{const p=pctOf(x);return `<div style="margin:6px 0 12px" onclick="go('cx')"><div style="display:flex;justify-content:space-between;font-weight:700"><span>${esc(x.e||'🫙')} ${esc(x.n)}</span><span>${Math.floor(p*100)}%</span></div><div class="bar" style="margin-top:5px"><i style="width:${p*100}%;background:${x.c||'var(--terra)'}"></i></div></div>`}).join('')||`<div class="empty">Nenhuma caixinha ainda.<br><button class="btn soft" style="margin-top:10px" onclick="go('cx')">＋ Criar a primeira</button></div>`}</div>`;
+  return o}
+
+/* ================== finanças ================== */
+function fin(){const S2=[['res','📊 Resumo'],['mes','📅 Contas'],['pont','🎯 Pontuais'],['ent','💵 Entradas']];
+  return title('💰','Finanças da casa','var(--mel2)')+`<div class="seg">${S2.map(([k,n])=>`<button class="${fsub===k?'sel':''}" onclick="fs('${k}')">${n}</button>`).join('')}</div>`+({res:resV,mes:mesV,pont:pontV,ent:entV}[fsub])()}
+
+function mesV(){const c=calc(ym()),M=c.M,q=S.pc.filter(x=>x.f<=0&&!pgOf(x,M));
+  let h=`<div class="card"><b class="serif" style="font-size:18px">${mesN(M)}</b> <small>· os checks zeram sozinhos todo dia 1º</small><div class="kpi"><div>💵 Entra<b>${m$(c.ent)}</b></div><div>🧾 Contas<b>${m$(c.cont)}</b></div><div>✅ Já pago<b>${m$(c.pago)}</b></div><div>⏳ Falta pagar<b>${m$(c.falta)}</b></div><div class="wide">${c.sobra>=0?'🌼':'⚠️'} Sobra<b style="color:${c.sobra<0?'var(--red)':'var(--ink)'}">${m$(c.sobra)}</b></div></div></div>`;
+  const GR=S.fx.filter(x=>x.gr),FX=S.fx.filter(x=>!x.gr);
+  h+=`<h2>🏠 Contas fixas</h2><div class="card">${FX.slice().sort((a,b)=>(a.dia||99)-(b.dia||99)).map(x=>{const p=pgOf(x,M);return `<div class="row ${p?'done':''}"><button class="ck ${p?'on':''}" onclick="tgFx(${x.id},event)">${p?'✓':''}</button><span class="t"><b onclick="ren('fx',${x.id})">${esc(x.n)}</b><br>${venc(x,M)}</span><div class="ctl"><input class="num" inputmode="decimal" value="${x.v}" onchange="upd('fx',${x.id},{v:num(this.value)})"><input class="num" style="width:58px" inputmode="numeric" placeholder="dia" value="${x.dia||''}" onchange="upd('fx',${x.id},{dia:Math.min(31,num(this.value))})"><button class="mini" title="Virar gasto aos poucos" onclick="upd('fx',${x.id},{gr:true})">🔁</button></div><button class="x" onclick="delC('fx',${x.id},'${esc(x.n).replace(/'/g,'')}')">🗑</button></div>`}).join('')||'<div class="empty">Nenhuma conta fixa.</div>'}
+  <div class="total">🧾 Contas fixas: <b>${m$(tt(FX,x=>x.v))}</b>${GR.length?` · com os gastos aos poucos: <b>${m$(tt(S.fx,x=>x.v))}</b>`:''}</div>
+  <div class="add" style="margin-top:10px"><input id="fnm" placeholder="Nova conta fixa"><input id="fvl" class="num" inputmode="decimal" placeholder="Valor"><input id="fdi" style="width:74px" inputmode="numeric" placeholder="Dia"><button class="btn" onclick="if(gv('fnm').trim())put('fx',{id:uid(),n:gv('fnm').trim(),v:num(gv('fvl')),dia:Math.min(31,num(gv('fdi'))),pgs:{}})">＋</button></div></div>`;
+  h+=`<h2>🔄 Gastos aos poucos</h2><div class="card"><small>Mercado, gasolina, farmácia… Lance cada gasto quando acontecer. O previsto continua contando nas contas do mês.</small>${GR.map(x=>{const L=gsL(x,M),t=gsT(x,M),r=x.v-t,pct=x.v?Math.min(100,t/x.v*100):0;
+  return `<div class="row" style="flex-wrap:wrap"><span class="t"><b onclick="ren('fx',${x.id})">${esc(x.n)}</b><br><small>${m$(t)} de ${m$(x.v)} · ${r>=0?'resta '+m$(r):'<b style="color:var(--red)">passou '+m$(-r)+'</b>'}</small></span><div class="ctl"><input class="num" inputmode="decimal" title="Previsto no mês" value="${x.v}" onchange="upd('fx',${x.id},{v:num(this.value)})"><button class="mini" title="Voltar a ser conta com check" onclick="upd('fx',${x.id},{gr:false})">🔁</button></div><button class="x" onclick="delC('fx',${x.id})">🗑</button>
+  <div style="flex-basis:100%;order:4"><div class="bar" style="margin-top:4px"><i style="width:${pct}%;background:${r<0?'var(--red)':'var(--mel)'}"></i></div>
+  <div class="add" style="margin-top:8px"><input id="gs${x.id}" inputmode="decimal" class="num grow" placeholder="Gastei R$" onkeydown="if(event.key==='Enter')gsAdd(${x.id},this.value,event)"><button class="btn soft" onclick="gsAdd(${x.id},gv('gs${x.id}'),event)">＋ Lançar</button></div>
+  ${L.length?`<div class="chips">${L.map((a,i)=>`<span class="pill" style="padding:5px 9px">${a.d.slice(8)}/${a.d.slice(5,7)} · ${m$(a.v)} ${a.q?who(a.q):''} <a href="#" onclick="gsDel(${x.id},${i});return false" style="text-decoration:none;color:var(--mut)">✕</a></span>`).join('')}</div>`:''}</div></div>`}).join('')||'<div class="empty">Nenhum ainda. Toque em 🔁 numa conta fixa pra ela virar gasto aos poucos.</div>'}
+  ${GR.length?`<div class="total">🔄 Gasto até agora: <b>${m$(tt(GR,x=>gsT(x,M)))}</b> de <b>${m$(tt(GR,x=>x.v))}</b> previstos</div>`:''}</div>`;
+  h+=`<h2>💳 Parcelas</h2><div class="card">${c.pc.map(x=>{const p=pgOf(x,M);return `<div class="row ${p?'done':''}"><button class="ck ${p?'on':''}" onclick="payPc(${x.id},event)">${p?'✓':''}</button><span class="t"><b onclick="ren('pc',${x.id})">${esc(x.n)}</b><br><small>${x.f>0?'faltam '+x.f:'🎉 última paga!'}</small> ${p?who(p):''}</span><div class="ctl"><input class="num" inputmode="decimal" value="${x.v}" onchange="upd('pc',${x.id},{v:num(this.value)})"></div><button class="x" onclick="delC('pc',${x.id})">🗑</button></div>`}).join('')||'<div class="empty">Sem parcelas.</div>'}
+  ${q.length?`<small>🎉 Quitadas: ${q.map(x=>esc(x.n)).join(', ')}</small>`:''}
+  <div class="total">💳 Parcelas deste mês: <b>${m$(tt(c.pc,x=>x.v))}</b><br>📉 Ainda devemos no total: <b>${m$(tt(S.pc,x=>x.v*Math.max(0,x.f)))}</b> <small>(${tt(S.pc,x=>Math.max(0,x.f))} parcelas restantes)</small></div>
+  <div class="add" style="margin-top:10px"><input id="xn" placeholder="Nova parcela"><input id="xv" class="num" inputmode="decimal" placeholder="Valor"><input id="xf" style="width:80px" inputmode="numeric" placeholder="Faltam"><button class="btn" onclick="if(gv('xn').trim())put('pc',{id:uid(),n:gv('xn').trim(),v:num(gv('xv')),f:num(gv('xf'))||1,pgs:{}})">＋</button></div></div>`;
+  return h}
+function tgFx(id,ev){const x=S.fx.find(a=>a.id===id),M=ym(),p=Object.assign({},x.pgs);if(p[M])delete p[M];else{p[M]=ME||'—';sparkle(ev,'✨')}upd('fx',id,{pgs:p})}
+function payPc(id,ev){const x=S.pc.find(a=>a.id===id),M=ym(),p=Object.assign({},x.pgs);let f=+x.f||0;
+  if(p[M]){delete p[M];f+=1}else{p[M]=ME||'—';f=Math.max(0,f-1);if(f===0){confetti(50);toast('🎉 Parcela quitada! Menos uma!')}else sparkle(ev,'✨')}upd('pc',id,{pgs:p,f})}
+function gsAdd(id,val,ev){const v=num(val);if(!v)return;const x=S.fx.find(a=>a.id===id),M=ym(),gs=Object.assign({},x.gs);gs[M]=gsL(x,M).concat({v,d:today(),q:ME||''});
+  const t=tt(gs[M],a=>a.v);upd('fx',id,{gs});toast(t>x.v?'⚠️ Passou do previsto em '+m$(t-x.v):'✅ Lançado! Resta '+m$(x.v-t));sparkle(ev,'🪙')}
+function gsDel(id,i){const x=S.fx.find(a=>a.id===id),M=ym(),gs=Object.assign({},x.gs),l=gsL(x,M).slice();l.splice(i,1);gs[M]=l;upd('fx',id,{gs})}
+
+function pontV(){return `<div class="card"><small>Contas que aparecem uma vez só: um conserto, um presente, um boleto avulso.</small><div class="add" style="margin-top:10px"><input id="tn" placeholder="Qual conta?"><input id="tv" class="num" inputmode="decimal" placeholder="Valor"><button class="btn" onclick="if(gv('tn').trim())put('pt',{id:uid(),n:gv('tn').trim(),v:num(gv('tv')),ok:false,por:ME})">＋</button></div></div>
+  <div class="card">${S.pt.slice().sort((a,b)=>a.ok-b.ok).map(x=>`<div class="row ${x.ok?'done':''}"><button class="ck ${x.ok?'on':''}" onclick="tgPt(${x.id},event)">${x.ok?'✓':''}</button><span class="t"><b onclick="ren('pt',${x.id})">${esc(x.n)}</b>${x.ok?`<br><small>pago em ${x.okM?mesN(x.okM):''}</small> ${who(x.quem)}`:''}</span><div class="ctl"><input class="num" inputmode="decimal" value="${x.v}" onchange="upd('pt',${x.id},{v:num(this.value)})"></div><button class="x" onclick="delC('pt',${x.id})">🗑</button></div>`).join('')||'<div class="empty">Nenhuma conta pontual. 🌈</div>'}
+  <div class="total">⏳ Falta pagar: <b>${m$(tt(S.pt.filter(x=>!x.ok),x=>x.v))}</b></div></div>`}
+function tgPt(id,ev){const x=S.pt.find(a=>a.id===id);if(x.ok)upd('pt',id,{ok:false,okM:'',quem:''});else{sparkle(ev,'✨');upd('pt',id,{ok:true,okM:ym(),quem:ME})}}
+
+const PS=['Léo','Lica','Casa'];
+function entV(){const t=tt(S.en,e=>e.v*(e.q||1)),by=p=>tt(S.en.filter(e=>(e.p||'Casa')===p),e=>e.v*(e.q||1));
+  return `<div class="card"><b class="serif" style="font-size:18px">💵 Entra por mês: ${m$(t)}</b><div class="kpi"><div>${who('Léo')} coloca<b>${m$(by('Léo'))}</b></div><div>${who('Lica')} coloca<b>${m$(by('Lica'))}</b></div>${by('Casa')?`<div class="wide">${who('Casa')} outras<b>${m$(by('Casa'))}</b></div>`:''}</div></div>
+  <div class="card">${S.en.map(e=>`<div class="row"><span class="t"><b onclick="ren('en',${e.id})">${esc(e.n)}</b><br><button onclick="cyP(${e.id})" title="Trocar quem">${who(e.p||'Casa')} <small>trocar</small></button>${e.q?'<br><small>valor por vez × vezes no mês</small>':''}</span><input class="num" inputmode="decimal" value="${e.v}" onchange="upd('en',${e.id},{v:num(this.value)})">${e.q?`✕<input class="num" style="width:56px" inputmode="numeric" value="${e.q}" onchange="upd('en',${e.id},{q:num(this.value)||1})">`:''}<button class="x" onclick="delC('en',${e.id})">🗑</button></div>`).join('')||'<div class="empty">Cadastre aqui quanto cada um coloca na casa por mês. 💛</div>'}</div>
+  <div class="card"><b>＋ Nova entrada</b><div class="add" style="margin-top:8px"><input id="enn" placeholder="Ex.: Salário da Lica"><input id="env" class="num" inputmode="decimal" placeholder="Valor"><input id="enq" style="width:74px" inputmode="numeric" placeholder="Vezes"></div>
+  <div class="chips" id="enp">${PS.map(p=>`<button class="chip ${p===(ME||'Léo')?'sel':''}" data-p="${p}" onclick="document.querySelectorAll('#enp .chip').forEach(c=>c.classList.toggle('sel',c===this))">${p==='Léo'?'🧔':p==='Lica'?'👩':'🏠'} ${p}</button>`).join('')}</div>
+  <button class="btn" style="margin-top:10px;width:100%" onclick="addEn()">＋ Adicionar entrada</button></div>`}
+function addEn(){const n=gv('enn').trim();if(!n)return;const p=($('#enp .chip.sel')||{}).dataset;const q=num(gv('enq'));put('en',Object.assign({id:uid(),n,v:num(gv('env')),p:p?p.p:'Casa'},q>1?{q}:{}));toast('💵 Entrada adicionada')}
+function cyP(id){const e=S.en.find(a=>a.id===id);upd('en',id,{p:PS[(PS.indexOf(e.p||'Casa')+1)%3]})}
+
+/* ---------- resumo ---------- */
+function resumo(M){const out=[],pay={};const addP=(q,v)=>{q=q&&q!=='—'?q:'Sem nome';pay[q]=(pay[q]||0)+v};
+  let fixos=0,poucos=[],parc=0,pont=0;
+  S.fx.forEach(x=>{if(x.gr){const t=gsT(x,M);if(t){poucos.push([x.n,t]);gsL(x,M).forEach(a=>addP(a.q,a.v))}}else if(pgOf(x,M)){fixos+=+x.v||0;addP(pgOf(x,M),+x.v||0)}});
+  S.pc.forEach(x=>{if(pgOf(x,M)){parc+=+x.v||0;addP(pgOf(x,M),+x.v||0)}});
+  S.pt.forEach(x=>{if(x.ok&&x.okM===M){pont+=+x.v||0;addP(x.quem,+x.v||0)}});
+  let guard=0;S.cx.forEach(x=>(x.mov||[]).forEach(m=>{if(m.d&&m.d.slice(0,7)===M)guard+=m.v}));
+  const ent=tt(S.en,e=>e.v*(e.q||1)),entBy={};S.en.forEach(e=>{const p=e.p||'Casa';entBy[p]=(entBy[p]||0)+e.v*(e.q||1)});
+  const saiu=fixos+parc+pont+tt(poucos,a=>a[1]);
+  return {ent,entBy,saiu,fixos,poucos,parc,pont,guard,pay,sobra:ent-saiu-guard}}
+function resV(){const M=resM,r=resumo(M),cur=M===ym(),c=calc(M);
+  const cats=[['Contas fixas',r.fixos,'#C96F4A'],...r.poucos.map((p,i)=>[p[0],p[1],['#E0A43A','#D9A066','#B88A4A','#E7B96A'][i%4]]),['Parcelas',r.parc,'#8E6C8A'],['Pontuais',r.pont,'#D47A90']].filter(a=>a[1]>0);
+  const base=Math.max(r.ent,r.saiu+r.guard,1),w=v=>Math.max(0,v/base*100);
+  const pcol={'Léo':'var(--leo)','Lica':'var(--lica)','Casa':'var(--mel)'};
+  const maxCat=Math.max(1,...cats.map(a=>a[1]));
+  let h=`<div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><button class="mini" onclick="resM=shiftM(resM,-1);render()">◀</button><b class="serif" style="font-size:19px">${mesN(M)}</b><button class="mini" onclick="resM=shiftM(resM,1);render()" ${cur?'disabled style="opacity:.3"':''}>▶</button></div>
+  <div class="kpi"><div>💵 Entrou<b>${m$(r.ent)}</b></div><div>🧾 Saiu<b>${m$(r.saiu)}</b></div><div>🫙 Guardado<b>${m$(r.guard)}</b></div><div>${r.sobra>=0?'🌼':'⚠️'} Sobrou<b style="color:${r.sobra<0?'var(--red)':'var(--ink)'}">${m$(r.sobra)}</b></div></div>
+  <div style="margin-top:14px;font-size:13px;font-weight:700" class="mut">Pra onde foi o dinheiro</div>
+  <div class="flow">${cats.map(a=>`<i style="width:${w(a[1])}%;background:${a[2]}"></i>`).join('')}<i style="width:${w(r.guard)}%;background:var(--sage)"></i><i style="width:${w(Math.max(0,r.sobra))}%;background:#EAD9BF"></i></div>
+  <div class="leg">${cats.map(a=>`<span style="--c:${a[2]}">${esc(a[0])}</span>`).join('')}${r.guard?'<span style="--c:var(--sage)">Caixinhas</span>':''}${r.sobra>0?'<span style="--c:#EAD9BF">Sobrou</span>':''}</div>
+  ${cur?`<div class="total">⏳ Ainda falta pagar neste mês: <b>${m$(c.falta)}</b></div>`:''}</div>`;
+  h+=`<h2>🧾 Gastos do mês</h2><div class="card">${cats.map(a=>`<div class="lrow"><span class="lb">${esc(a[0])}</span><div class="bar"><i style="width:${a[1]/maxCat*100}%;background:${a[2]}"></i></div><b>${m$(a[1])}</b></div>`).join('')||'<div class="empty">Nada pago neste mês ainda.</div>'}</div>`;
+  const ents=Object.entries(r.entBy),pays=Object.entries(r.pay),mx=Math.max(1,...ents.map(a=>a[1]),...pays.map(a=>a[1]));
+  h+=`<h2>💛 Quem colocou e quem pagou</h2><div class="card"><div class="mut" style="font-size:13px;font-weight:700">Entradas (por mês)</div>${ents.map(([p,v])=>`<div class="lrow"><span class="lb">${who(p)}</span><div class="bar"><i style="width:${v/mx*100}%;background:${pcol[p]||'var(--mel)'}"></i></div><b>${m$(v)}</b></div>`).join('')||'<div class="empty">Cadastre as entradas de cada um.</div>'}
+  <div class="mut" style="font-size:13px;font-weight:700;margin-top:12px">Contas pagas em ${MES[+M.slice(5)-1]}</div>${pays.map(([p,v])=>`<div class="lrow"><span class="lb">${who(p)}</span><div class="bar"><i style="width:${v/mx*100}%;background:${pcol[p]||'#C8B8A6'}"></i></div><b>${m$(v)}</b></div>`).join('')||'<div class="empty">Nenhuma conta marcada como paga.</div>'}</div>`;
+  return h}
+
+/* ================== caixinhas ================== */
+const CXC=['#C96F4A','#6F8F72','#E0A43A','#D47A90','#7A8FB8','#9C7BB0'],CXE=['🏡','👶','✈️','🛋️','🚗','🎁','💍','🏖️','🐾','🌱','📚','🆘'];
+const salOf=x=>tt(x.mov||[],m=>m.v),pctOf=x=>x.meta?Math.max(0,Math.min(1,salOf(x)/x.meta)):0;
+function jar(x){const p=pctOf(x),from=prevPct[x.id]!=null?prevPct[x.id]:p,y=f=>(1-f)*72;const c=x.c||'#C96F4A';
+  return `<svg class="jar" viewBox="0 0 84 100"><defs><clipPath id="jc${x.id}"><path d="M16 30 Q16 24 22 24 H62 Q68 24 68 30 V86 Q68 95 59 95 H25 Q16 95 16 86Z"/></clipPath></defs>
+  <rect x="24" y="10" width="36" height="12" rx="5" fill="${c}"/><rect x="20" y="20" width="44" height="6" rx="3" fill="${c}" opacity=".7"/>
+  <path d="M16 30 Q16 24 22 24 H62 Q68 24 68 30 V86 Q68 95 59 95 H25 Q16 95 16 86Z" fill="#FFFDF9"/>
+  <g clip-path="url(#jc${x.id})"><g class="liq" data-id="${x.id}" data-to="${y(p)}" style="transform:translateY(${y(from)}px)">
+   <path class="wave2" d="M0 26 Q15 20 30 26 T60 26 T90 26 T120 26 T150 26 V100 H0Z" fill="${c}"/>
+   <path class="wave" d="M0 28 Q15 22 30 28 T60 28 T90 28 T120 28 T150 28 V100 H0Z" fill="${c}" opacity=".85"/></g></g>
+  <path d="M16 30 Q16 24 22 24 H62 Q68 24 68 30 V86 Q68 95 59 95 H25 Q16 95 16 86Z" fill="none" stroke="#E2D2BE" stroke-width="2.5"/>
+  <path d="M23 36 V72" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+  <text x="42" y="68" text-anchor="middle" font-size="22" class="bob">${esc(x.e||'🫙')}</text></svg>`}
+function cxMsg(p){return p>=1?'Conseguimos! 🎉':p>=.75?'Quase lá! 🌻':p>=.5?'Passamos da metade 🌼':p>=.25?'Crescendo 🌱':p>0?'Começamos! ✨':'Bora encher? 🫙'}
+function cxV(){let h=title('🫙','Caixinhas','var(--sage2)','Nossos projetos e sonhos, juntinhos');
+  h+=S.cx.map(x=>{const s=salOf(x),p=pctOf(x),c=x.c||'#C96F4A',op=openMov===x.id;
+  return `<div class="card" id="cx${x.id}"><div class="cx">${jar(x)}<div class="info"><div class="nm" onclick="ren('cx',${x.id})">${esc(x.n)}</div><small>${m$(s)} de <a href="#" onclick="setMeta(${x.id});return false" style="color:inherit">${m$(x.meta)}</a></small>
+   <div class="bar" style="--c:${c}"><i style="width:${p*100}%"></i></div><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px"><span class="pill" style="background:${c}22;color:${c}">${Math.floor(p*100)}% · ${cxMsg(p)}</span>${p<1&&x.meta?`<small>faltam ${m$(x.meta-s)}</small>`:''}</div></div></div>
+   <div class="add" style="margin-top:12px"><button class="btn" style="flex:1;background:${c}" onclick="openMov=${op?'null':x.id};render()">${op?'Fechar':'＋ Guardar'}</button><button class="btn ghost" onclick="tirar(${x.id})">− Tirar</button><button class="x" onclick="delC('cx',${x.id},'a caixinha ${esc(x.n).replace(/'/g,'')}')">🗑</button></div>
+   <div class="mov ${op?'open':''}"><div class="chips">${[50,100,200,500].map(v=>`<button class="chip" onclick="guardar(${x.id},${v},event)">+ ${m$(v).replace(',00','')}</button>`).join('')}</div>
+   <div class="add" style="margin-top:8px"><input id="mv${x.id}" class="grow" inputmode="decimal" placeholder="Outro valor" onkeydown="if(event.key==='Enter')guardar(${x.id},num(this.value),event)"><button class="btn sage" onclick="guardar(${x.id},num(gv('mv${x.id}')),event)">Guardar</button></div>
+   ${(x.mov||[]).length?`<div style="margin-top:10px">${(x.mov||[]).slice(-5).reverse().map(m=>`<div class="row" style="padding:7px 2px"><span class="t"><small>${m.d.slice(8)}/${m.d.slice(5,7)}</small> ${who(m.q)}</span><b style="color:${m.v<0?'var(--red)':'var(--sage)'}">${m.v<0?'−':'+'} ${m$(Math.abs(m.v))}</b></div>`).join('')}</div>`:''}</div></div>`}).join('');
+  h+=`<div class="card"><b class="serif" style="font-size:18px">＋ Nova caixinha</b><input id="cxn" placeholder="Ex.: Viagem de férias" style="width:100%;margin-top:10px"><input id="cxm" inputmode="decimal" placeholder="Meta (R$)" style="width:100%;margin-top:8px">
+   <div class="chips" id="cxe">${CXE.map((e,i)=>`<button class="chip ${i===0?'sel':''}" data-e="${e}" onclick="document.querySelectorAll('#cxe .chip').forEach(c=>c.classList.toggle('sel',c===this))">${e}</button>`).join('')}</div>
+   <button class="btn" style="width:100%;margin-top:12px" onclick="newCx()">Criar caixinha</button></div>`;
+  return h}
+function newCx(){const n=gv('cxn').trim(),meta=num(gv('cxm'));if(!n)return toast('Dá um nome pra caixinha 🙂');if(!meta)return toast('Coloca uma meta em R$ 🙂');
+  const e=($('#cxe .chip.sel')||{dataset:{e:'🫙'}}).dataset.e;const x={id:uid(),n,meta,e,c:CXC[S.cx.length%CXC.length],mov:[]};prevPct[x.id]=0;put('cx',x);toast('🫙 Caixinha criada!')}
+function setMeta(id){const x=S.cx.find(a=>a.id===id),v=prompt('Nova meta (R$):',x.meta);if(v!=null&&num(v))upd('cx',id,{meta:num(v)})}
+function guardar(id,v,ev){if(!v||v<0)return;const x=S.cx.find(a=>a.id===id),p0=pctOf(x);prevPct[id]=p0;
+  const nx=Object.assign({},x,{mov:(x.mov||[]).concat({v,d:today(),q:ME||''})}),p1=pctOf(nx);openMov=null;put('cx',nx);coin(id);
+  const ms=[[1,'🏡 Conseguimos! Meta batida! 🎉'],[.75,'🌻 75%! Quase lá!'],[.5,'🌼 Metade do caminho!'],[.25,'🌱 Um quarto já foi!']].find(([m])=>p0<m&&p1>=m);
+  if(ms){toast(ms[1]);if(ms[0]===1)confetti(110);else confetti(30)}else toast('🪙 +'+m$(v)+' na '+x.n)}
+function tirar(id){const x=S.cx.find(a=>a.id===id),v=num(prompt('Quanto vai tirar da caixinha "'+x.n+'"? (R$)'));if(!v)return;prevPct[id]=pctOf(x);put('cx',Object.assign({},x,{mov:(x.mov||[]).concat({v:-v,d:today(),q:ME||''})}));toast('Tudo bem, a gente enche de novo 💛')}
+function coin(id){setTimeout(()=>{const j=document.querySelector('#cx'+id+' .jar');if(!j)return;const r=j.getBoundingClientRect();for(let i=0;i<3;i++)setTimeout(()=>{const c=document.createElement('div');c.className='coin';c.textContent='🪙';c.style.left=(r.left+r.width/2-13+(i-1)*8)+'px';c.style.top=(r.top+r.height*.45)+'px';document.body.appendChild(c);setTimeout(()=>c.remove(),950)},i*160)},60)}
+
+/* ================== pendências da Lica ================== */
+const late=x=>!x.ok&&x.prazo&&x.prazo<today();
+function prazoTag(x){if(!x.prazo)return '';const d=Math.round((new Date(x.prazo+'T12:00')-new Date(today()+'T12:00'))/864e5),dt=x.prazo.slice(8)+'/'+x.prazo.slice(5,7);
+  return d<0?`<span class="pill hot">atrasada · ${dt}</span>`:d===0?'<span class="pill hot">é hoje!</span>':d===1?'<span class="pill warm">amanhã</span>':d<=3?`<span class="pill warm">em ${d} dias · ${dt}</span>`:`<span class="pill">📅 ${dt}</span>`}
+const UR={1:['🌿','Tranquila'],2:['🌼','Importante'],3:['🔥','Urgente']};
+function licaV(){const ab=S.pend.filter(x=>!x.ok).sort((a,b)=>(late(b)-late(a))||(b.urg-a.urg)||((a.prazo||'9')>(b.prazo||'9')?1:-1)),fe=S.pend.filter(x=>x.ok).sort((a,b)=>(b.okEm||'')>(a.okEm||'')?1:-1);
+  let h=title('🌷','Pendências da Lica','var(--rosa2)',ab.length?`${ab.length} pra resolver`:'Tudo em dia 💛');
+  h+=`<div class="card"><input id="pt1" placeholder="O que precisa ser feito?" style="width:100%" onkeydown="if(event.key==='Enter')addPend()">
+  <div class="add" style="margin-top:8px"><label class="mut" style="font-size:14px;font-weight:700">Prazo</label><input id="pt2" type="date" class="grow"></div>
+  <div class="urg" style="margin-top:8px">${[1,2,3].map(u=>`<button class="u${u} ${newUrg===u?'sel':''}" onclick="newUrg=${u};this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b===this))">${UR[u][0]} ${UR[u][1]}</button>`).join('')}</div>
+  <button class="btn" style="width:100%;margin-top:10px;background:var(--rosa)" onclick="addPend()">＋ Adicionar</button></div>`;
+  h+=`<div class="card">${ab.map(x=>`<div class="row pd u${x.urg}" id="pd${x.id}"><button class="ck" onclick="donePend(${x.id},event)"></button><span class="t"><span class="nm" onclick="ren('pend',${x.id})">${esc(x.t)}</span><br><span style="display:inline-flex;gap:5px;flex-wrap:wrap;margin-top:3px"><button class="pill ${x.urg===3?'hot':x.urg===2?'warm':'ok'}" onclick="cyU(${x.id})">${UR[x.urg][0]} ${UR[x.urg][1]}</button>${prazoTag(x)}${x.por&&x.por!=='Lica'?`<small>por ${esc(x.por)}</small>`:''}</span></span><button class="mini" onclick="mvPrazo(${x.id})">📅</button><button class="x" onclick="delC('pend',${x.id})">🗑</button></div>`).join('')||'<div class="empty">Nenhuma pendência. Aproveita! 🌷</div>'}</div>`;
+  if(fe.length)h+=`<button class="btn ghost" style="width:100%" onclick="showDone=!showDone;render()">${showDone?'Esconder':'Ver'} feitas (${fe.length})</button>${showDone?`<div class="card">${fe.map(x=>`<div class="row done"><button class="ck on" onclick="upd('pend',${x.id},{ok:false})">✓</button><span class="t"><span class="nm">${esc(x.t)}</span><br><small>feita ${x.okEm?x.okEm.slice(8)+'/'+x.okEm.slice(5,7):''}</small></span><button class="x" onclick="del('pend',${x.id})">🗑</button></div>`).join('')}<button class="btn ghost" style="width:100%;margin-top:8px" onclick="if(confirm('Limpar todas as feitas?')){S.pend.filter(x=>x.ok).forEach(x=>del('pend',x.id,1));render()}">🧹 Limpar feitas</button></div>`:''}`;
+  return h}
+function addPend(){const t=gv('pt1').trim();if(!t)return;put('pend',{id:uid(),t,prazo:gv('pt2'),urg:newUrg,ok:false,por:ME||''});toast('🌷 Anotado!')}
+function donePend(id,ev){sparkle(ev,'💛');const r=$('#pd'+id);if(r)r.classList.add('gone');setTimeout(()=>{upd('pend',id,{ok:true,okEm:today()});const n=S.pend.filter(x=>!x.ok).length;toast(n?'Feito! 💛 Faltam '+n:'Tudo feito! 🌷🎉');if(!n)confetti(60)},380)}
+function cyU(id){const x=S.pend.find(a=>a.id===id);upd('pend',id,{urg:x.urg%3+1})}
+function mvPrazo(id){const x=S.pend.find(a=>a.id===id);openSheet(`<h2 style="margin-top:0">📅 Prazo</h2><p class="mut">${esc(x.t)}</p><input id="np" type="date" value="${x.prazo||''}" style="width:100%"><div class="add" style="margin-top:12px"><button class="btn" style="flex:1" onclick="upd('pend',${id},{prazo:gv('np')});closeSheet()">Salvar</button><button class="btn ghost" onclick="upd('pend',${id},{prazo:''});closeSheet()">Sem prazo</button></div>`)}
+
+/* ================== mercado ================== */
+function mercV(){const inL=new Set(S.merc.map(x=>nrm(x.t)));const fq=S.freq.filter(f=>!inL.has(nrm(f.t))).sort((a,b)=>b.c-a.c).slice(0,14);window.__fq=fq;
+  let h=title('🛒','Mercado','var(--terra2)','Acabou em casa? Anota aqui. Comprou? Apaga.');
+  h+=`<div class="card"><div class="add"><input id="mi" placeholder="O que está faltando?" onkeydown="if(event.key==='Enter')addMerc()"><button class="btn" onclick="addMerc()">＋</button></div><small>Dica: dá pra mandar vários de uma vez, separando por vírgula.</small>
+  ${fq.length?`<div class="mut" style="font-size:13px;font-weight:700;margin-top:12px">Sempre compramos</div><div class="chips">${fq.map((f,i)=>`<button class="chip" onclick="addFq(${i})">＋ ${esc(f.t)}</button>`).join('')}</div>`:''}</div>`;
+  h+=`<div class="card">${S.merc.slice().sort((a,b)=>a.id-b.id).map(x=>`<div class="row mk" id="mk${x.id}"><span class="t">${esc(x.t)} ${x.por?`<br><small>${who(x.por)}</small>`:''}</span><button class="x" onclick="rmMerc(${x.id})">🗑</button></div>`).join('')||'<div class="empty">Lista vazia. Casa abastecida! 🥳</div>'}
+  ${S.merc.length?`<div class="total">🧺 ${S.merc.length} item(ns) na lista</div>`:''}</div>`;
+  return h}
+function addMercT(list){list.forEach((t,i)=>{t=t.trim();if(!t)return;t=t[0].toUpperCase()+t.slice(1);if(S.merc.some(x=>nrm(x.t)===nrm(t)))return;
+  put('merc',{id:uid()+i,t,por:ME||''},1);const k='f_'+nrm(t).replace(/[^a-z0-9]+/g,'_').slice(0,60),f=S.freq.find(a=>a.id===k);put('freq',{id:k,t,c:(f?f.c:0)+1},1)});render()}
+function addMerc(){const v=gv('mi');if(!v.trim())return;addMercT(v.split(/,|;|\n| e (?=\S)/));setTimeout(()=>{const i=$('#mi');if(i)i.focus()},30)}
+function addFq(i){const f=(window.__fq||[])[i];if(f){addMercT([f.t]);toast('🛒 '+f.t+' na lista')}}
+function rmMerc(id){const r=$('#mk'+id);if(r){r.style.transition='all .25s';r.style.opacity=0;r.style.transform='translateX(30px)'}setTimeout(()=>del('merc',id),220)}
+
+/* ================== ajustes, backup, importação ================== */
+function openSheet(h){$('#sheetIn').innerHTML=h;$('#sheet').classList.add('open')}
+function closeSheet(){$('#sheet').classList.remove('open')}
+function openSet(){openSheet(`<h2 style="margin-top:0">⚙️ Ajustes</h2>
+  <div class="card"><b>Neste celular quem usa é:</b><div class="add" style="margin-top:8px"><button class="chip ${ME==='Léo'?'sel':''}" onclick="setMe('Léo')">🧔 Léo</button><button class="chip ${ME==='Lica'?'sel':''}" onclick="setMe('Lica')">👩 Lica</button></div>${store.email?`<small style="display:block;margin-top:8px">Conectado como ${esc(store.email)}</small>`:''}</div>
+  <div class="card"><b>🏠 Trazer do Meu Dinheiro</b><p class="mut" style="margin:4px 0 10px">Escolha o backup do seu app pessoal (Início › Ajustes › Exportar). Você marca só o que é da casa.</p><button class="btn" onclick="impStart()">📂 Escolher backup</button></div>
+  <div class="card"><b>💾 Backup do Nosso Lar</b><div class="add" style="margin-top:8px"><button class="btn soft" onclick="exportar()">Baixar backup</button><button class="btn ghost" onclick="restaurar()">Restaurar</button></div></div>
+  ${store.remote?`<button class="btn ghost" style="width:100%" onclick="store.remote.logout()">🚪 Sair da conta</button>`:''}
+  <button class="btn" style="width:100%;margin-top:10px" onclick="closeSheet()">Fechar</button>`)}
+function exportar(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='backup-nosso-lar-'+today()+'.json';a.click()}
+function pickFile(cb){const i=document.createElement('input');i.type='file';i.accept='.json,application/json';i.onchange=()=>{const f=i.files[0];if(f)f.text().then(t=>{try{cb(JSON.parse(t))}catch(e){alert('Arquivo inválido')}})};i.click()}
+function restaurar(){pickFile(o=>{if(!COLS.some(c=>Array.isArray(o[c])))return alert('Esse não parece um backup do Nosso Lar.');if(!confirm('Juntar o backup com o que já está no app?'))return;
+  COLS.forEach(c=>(o[c]||[]).forEach(x=>{if(!S[c].some(a=>a.id===x.id))put(c,x,1)}));closeSheet();render();toast('✅ Backup restaurado')})}
+const HOUSEY=/condom|aluguel|luz|energia|agua|internet|wi-?fi|\bgas\b|mercado|comida|feira|hortifruti|iptu|faxin|diarist|bab[aá]|fralda|farmacia|netflix|streaming|spotify|tv|geladeira|sofa|fogao|maquina|cama|movel|moveis|seguro.*casa/;
+let IMP=null;
+function impStart(){pickFile(o=>{if(!o.fx&&!o.pc&&!o.en)return alert('Esse arquivo não parece o backup do seu app pessoal.');IMP=o;
+  const has=(col,n)=>S[col].some(a=>nrm(a.n)===nrm(n)),M=ym();
+  const sec=(t,col,arr,def,sub)=>arr.length?`<h2>${t}</h2><div class="card imp">${arr.map((x,i)=>{const dup=has(col,x.n);return `<label><input type="checkbox" data-c="${col}" data-i="${i}" ${!dup&&def(x)?'checked':''} ${dup?'disabled':''}><span class="t" style="flex:1"><b>${esc(x.n)}</b><br><small>${sub(x)}${dup?' · já está no app':''}</small></span></label>`}).join('')}</div>`:'';
+  const fx=o.fx||[],pc=(o.pc||[]).filter(x=>(+x.f||0)>0||x.pg===M),pt=(o.pt||[]).filter(x=>!x.ok),en=(o.en||[]).filter(x=>!x.auto);IMP.l={fx,pc,pt,en};
+  openSheet(`<h2 style="margin-top:0">🏠 O que é da casa?</h2><p class="mut">Já deixei marcado o que parece ser da casa. Ajuste do seu jeito. O seu app pessoal não muda nada.</p>
+  ${sec('🏠 Contas fixas e gastos aos poucos','fx',fx,x=>HOUSEY.test(nrm(x.n)),x=>m$(x.v)+(x.gr?' · aos poucos':'')+(x.dia?' · dia '+x.dia:''))}
+  ${sec('💳 Parcelas','pc',pc,x=>HOUSEY.test(nrm(x.n)),x=>m$(x.v)+' · faltam '+x.f)}
+  ${sec('🎯 Pontuais','pt',pt,()=>false,x=>m$(x.v))}
+  ${sec('💵 Entradas','en',en,()=>false,x=>m$(x.v*(x.q||1))+' por mês')}
+  <p class="mut" style="font-size:14px">💡 Em vez de trazer suas entradas, você pode cadastrar em <b>Entradas</b> só o valor que cada um coloca na casa.</p>
+  <div class="add" style="position:sticky;bottom:0;background:var(--bg);padding:10px 0"><button class="btn" style="flex:1;padding:14px" onclick="impDo()">Trazer selecionados</button><button class="btn ghost" onclick="closeSheet()">Cancelar</button></div>`)})}
+function impDo(){const M=ym();let n=0;document.querySelectorAll('#sheetIn input[type=checkbox]:checked').forEach((c,k)=>{const col=c.dataset.c,x=IMP.l[col][+c.dataset.i],id=uid()+k;let o;
+  if(col==='fx'){const gs={};Object.entries(x.gs||{}).forEach(([m,l])=>gs[m]=(l||[]).map(a=>({v:+a.v||0,d:a.d||m+'-01',q:a.q||'Léo'})));o={id,n:x.n,v:+x.v||0,dia:+x.dia||0,gr:!!x.gr,gs,pgs:x.pg?{[x.pg]:'Léo'}:{}}}
+  else if(col==='pc')o={id,n:x.n,v:+x.v||0,f:+x.f||0,pgs:x.pg?{[x.pg]:'Léo'}:{}};
+  else if(col==='pt')o={id,n:x.n,v:+x.v||0,ok:false,por:'Léo'};
+  else o=Object.assign({id,n:x.n,v:+x.v||0,p:'Léo'},x.q?{q:+x.q}:{});
+  put(col,o,1);n++});closeSheet();IMP=null;render();if(n){toast('🏡 '+n+' item(ns) trazidos pra casa!');confetti(40)}}
+
+/* ================== render ================== */
+function render(){if(!booted)return;pendingRender=false;
+  const V={home,fin,cx:cxV,lica:licaV,merc:mercV};$('#app').innerHTML=(tab!=='home'&&syncMsg?`<div class="sync">${syncMsg}</div>`:'')+V[tab]();nav();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.liq').forEach(g=>{g.style.transform=`translateY(${g.dataset.to}px)`;const id=+g.dataset.id,x=S.cx.find(a=>a.id===id);if(x)prevPct[id]=pctOf(x)})))}
+function boot(){booted=true;try{ME=store.fixedMe||localStorage.getItem('nl-me')||''}catch(e){}if(store.fixedMe)ME=store.fixedMe;render();if(!ME)setTimeout(askMe,400)}
+window.NL={S,COLS,store,render,remoteRender,boot,setSync:t=>{syncMsg=t;render()}};
+function showLogin(fn){booted=false;$('#nav').innerHTML='';$('#app').innerHTML=`<div class="login">${HOUSE.replace('width="58" height="58"','width="96" height="96"')}<h1 style="font-size:34px;margin:10px 0 4px">Nosso Lar</h1><p class="mut" style="margin:0 0 18px">Nossa casa, nossas contas, nossos planos 💛</p>
+  <input id="lgE" type="email" autocomplete="username" placeholder="E-mail"><input id="lgP" type="password" autocomplete="current-password" placeholder="Senha" onkeydown="if(event.key==='Enter')$('#lgB').click()">
+  <button class="btn" id="lgB">Entrar</button><p id="lgM" style="color:var(--red);min-height:20px"></p></div>`;
+  $('#lgB').onclick=async()=>{$('#lgM').textContent='Entrando…';try{await fn($('#lgE').value.trim(),$('#lgP').value)}catch(e){$('#lgM').textContent='E-mail ou senha incorretos.'}}}
+window.NL.showLogin=showLogin;
+</script>
+
+<script type="module">
+/* ============ FIREBASE (cole aqui o firebaseConfig do projeto Nosso Lar) ============ */
+const firebaseConfig={apiKey:"AIzaSyDlKWHd_n6DqZw8yDSxOt2PjxL5uFR15uM",authDomain:"casa-da-lica.firebaseapp.com",projectId:"casa-da-lica",storageBucket:"casa-da-lica.firebasestorage.app",messagingSenderId:"217314546687",appId:"1:217314546687:web:d5bb2e66bdbcbe21e50dca"};
+/* e-mail de cada um → nome que aparece no app */
+const PESSOAS={"paivaleonardo036@gmail.com":"Léo" /* , "email-da-lica@...":"Lica" */};
+
+const NL=window.NL;
+if(firebaseConfig.apiKey.startsWith('COLE')){
+  NL.store.loadLocal();NL.boot();NL.setSync('🧪 Modo de teste: salvando só neste aparelho');
+}else{
+  const {initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+  const {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,setPersistence,browserLocalPersistence}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+  const {getFirestore,doc,setDoc,deleteDoc,collection,onSnapshot}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+  try{await setPersistence(auth,browserLocalPersistence)}catch(e){}
+  let unsubs=[];
+  const err=e=>NL.setSync('⚠️ Não consegui salvar: '+(e.code||e.message||'erro')+'. Confira a internet.');
+  onAuthStateChanged(auth,u=>{unsubs.forEach(f=>f());unsubs=[];
+    if(!u){NL.showLogin((e,p)=>signInWithEmailAndPassword(auth,e,p));return}
+    NL.store.email=u.email;NL.store.fixedMe=PESSOAS[(u.email||'').toLowerCase()]||'';
+    NL.store.remote={put:(c,o)=>setDoc(doc(db,c,String(o.id)),JSON.parse(JSON.stringify(o))).catch(err),del:(c,id)=>deleteDoc(doc(db,c,String(id))).catch(err),logout:()=>signOut(auth)};
+    NL.COLS.forEach(c=>NL.S[c]=[]);NL.boot();
+    NL.COLS.forEach(c=>unsubs.push(onSnapshot(collection(db,c),sn=>{NL.S[c]=sn.docs.map(d=>Object.assign({},d.data(),{id:/^\d+$/.test(d.id)?Number(d.id):d.id}));NL.remoteRender()},
+      e=>NL.setSync('⚠️ Sem acesso ao banco ('+(e.code||'erro')+'). Confira as regras do Firestore.'))));
+  });
+}
+</script>
+</body>
+</html>
