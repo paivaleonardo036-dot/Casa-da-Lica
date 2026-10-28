@@ -1,0 +1,12 @@
+{
+  "name": "Nosso Lar",
+  "short_name": "Nosso Lar",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF5EC",
+  "theme_color": "#FBF5EC",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
